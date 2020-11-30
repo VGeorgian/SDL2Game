@@ -8,7 +8,7 @@ private:
 	Interface* MyInterface;
 	bool isRunning;
 
-	Image* background;
+	Image* menuScreen;
 	Image* background2;
 	Image* background3;
 public:

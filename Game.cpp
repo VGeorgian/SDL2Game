@@ -10,7 +10,7 @@
 using namespace std;
 
 Game::Game() {
-    background = nullptr;
+    menuScreen = nullptr;
     background2 = nullptr;
     background3 = nullptr;
     isRunning = true;
@@ -48,28 +48,15 @@ Game::~Game() {
 }
 
 void Game::Init() {
-    background = new Image;
-    background->LoadImage("robi.png");
-    background->SetPosition(50, 50);
-    background->SetSize(100, 100);
-
-    background2 = new Image;
-    background2->SetParent(background);
-    background2->LoadImage("robi.png");
-    background2->SetPosition(90, 10);
-    background2->SetSize(80, 80);
-
-    background3 = new Image;
-    background3->SetParent(background2);
-    background3->LoadImage("robi.png");
-    background3->SetPosition(20, 20);
-    background3->SetSize(40, 40);
-
-    background->Show();
-    background2->Show();
+    menuScreen = new Image;
+    menuScreen->LoadImage("assets/img/menu_background.jpg");
+    menuScreen->SetPosition(0, 0);
+    menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    menuScreen->Show();
 }
+
 void Game::Run() {
-    int x = 0, i;
+    int i;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
@@ -77,14 +64,9 @@ void Game::Run() {
 
 	while (MyInterface->CheckIfRunning()) {
         SDL_PollEvent(&event);
-       background->SetPosition(x++, 10);
-       SDL_Delay(100);
 
         SDL_RenderClear(Interface::renderer);
-
-        for (i = 0; i < MyInterface->uiElements.size(); ++i) {
-            checked[i] = false;
-        }
+        memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
         for (vector<Interface*>::iterator it = MyInterface->uiElements.begin(); it != MyInterface->uiElements.end(); ++it) {
