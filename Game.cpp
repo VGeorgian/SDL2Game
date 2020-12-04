@@ -11,8 +11,6 @@ using namespace std;
 
 Game::Game() {
     menuScreen = nullptr;
-    background2 = nullptr;
-    background3 = nullptr;
     isRunning = true;
 
 	MyInterface = new Interface;
@@ -39,12 +37,15 @@ Game::Game() {
             Interface::renderer = SDL_CreateRenderer(Interface::Window, -1, 0);
             Init();
         }
-
     }
 }
 
 Game::~Game() {
 	delete MyInterface;
+    MyInterface = nullptr;
+
+    delete menuScreen;
+    menuScreen = nullptr;
 }
 
 void Game::Init() {
@@ -56,16 +57,53 @@ void Game::Init() {
 }
 
 void Game::Run() {
-    int i;
+    int i, x = 0;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
     bool checked[MAX_INTERFACE_ELEMENTS];
+    bool b_canRender = true;
 
-	while (MyInterface->CheckIfRunning()) {
-        SDL_PollEvent(&event);
+    unsigned int lastRenderTime = 0,
+                 currentRenderTime,
+                 renderInterval = 1000 / MAX_FPS,
+                 tmpTime = SDL_GetTicks();
 
-        SDL_RenderClear(Interface::renderer);
+    while (MyInterface->CheckIfRunning()) {
+        while (SDL_PollEvent(&event)) {
+            /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
+            switch (event.type) {
+            case SDL_KEYDOWN:
+                printf("Key press detected\n");
+                break;
+
+            case SDL_KEYUP:
+                printf("Key release detected\n");
+                break;
+
+            default:
+                break;
+            }
+        }
+
+        if (FPS_LIMIT){
+            currentRenderTime = SDL_GetTicks();
+            if (currentRenderTime > lastRenderTime + renderInterval) {
+                ++x;
+                if (currentRenderTime > tmpTime + 1000) {
+                    tmpTime = currentRenderTime;
+                    printf("FPS-uri: %d\n", x);
+                    x = 1;
+                }
+                lastRenderTime = currentRenderTime;
+                b_canRender = true;
+            }
+            else b_canRender = false;
+        }
+
+        if(b_canRender)
+            SDL_RenderClear(Interface::renderer);
+
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
@@ -74,7 +112,7 @@ void Game::Run() {
             if ((*it)->GetParent() == nullptr) {
                 (*it)->CheckPressedKeys();
                 (*it)->Update();
-                if((*it)->isShow())
+                if((*it)->isShow() && b_canRender)
                     (*it)->Render();
 
                 checked[i] = true;

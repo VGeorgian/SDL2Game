@@ -9,8 +9,6 @@ private:
 	bool isRunning;
 
 	Image* menuScreen;
-	Image* background2;
-	Image* background3;
 public:
 	Game();
 	~Game();
