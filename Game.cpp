@@ -1,7 +1,8 @@
-#include <SDL.h>
-#include <SDL_image.h>
 #include <iostream>
 #include <stack>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include "Game.h"
 #include "Image.h"
@@ -11,6 +12,7 @@ using namespace std;
 
 Game::Game() {
     menuScreen = nullptr;
+    textFPS = nullptr;
     isRunning = true;
 
 	MyInterface = new Interface;
@@ -35,12 +37,18 @@ Game::Game() {
         else {
             Interface::ScreenSurface = SDL_GetWindowSurface(Interface::Window);
             Interface::renderer = SDL_CreateRenderer(Interface::Window, -1, 0);
+            TTF_Init();
             Init();
         }
     }
 }
 
 Game::~Game() {
+    SDL_DestroyRenderer(Interface::renderer);
+    SDL_DestroyWindow(Interface::Window);
+    TTF_Quit();
+    SDL_Quit();
+
 	delete MyInterface;
     MyInterface = nullptr;
 
@@ -54,10 +62,17 @@ void Game::Init() {
     menuScreen->SetPosition(0, 0);
     menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     menuScreen->Show();
+
+    textFPS = new TextLine;
+    textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
+    textFPS->SetColor(255, 255, 255);
+    textFPS->SetText("FPS: 0");
+    textFPS->SetPosition(10, 0);
+    textFPS->Show();
 }
 
 void Game::Run() {
-    int i, x = 0;
+    int i, currentFPS = 0;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
@@ -89,11 +104,14 @@ void Game::Run() {
         if (FPS_LIMIT){
             currentRenderTime = SDL_GetTicks();
             if (currentRenderTime > lastRenderTime + renderInterval) {
-                ++x;
+                ++currentFPS;
                 if (currentRenderTime > tmpTime + 1000) {
                     tmpTime = currentRenderTime;
-                    printf("FPS-uri: %d\n", x);
-                    x = 1;
+                    //printf("FPS-uri: %d\n", currentFPS);
+                    char tmpBuffer[10];
+                    snprintf(tmpBuffer, 10, "FPS: %d", currentFPS);
+                    textFPS->SetText(tmpBuffer);
+                    currentFPS = 1;
                 }
                 lastRenderTime = currentRenderTime;
                 b_canRender = true;

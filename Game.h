@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "Interface.h"
 #include "Image.h"
+#include "TextLine.h"
 //#include "SettingsManager.h"
 
 class Game {
@@ -9,6 +10,7 @@ private:
 	bool isRunning;
 
 	Image* menuScreen;
+	TextLine* textFPS;
 public:
 	Game();
 	~Game();
