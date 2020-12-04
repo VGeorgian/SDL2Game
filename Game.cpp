@@ -38,7 +38,9 @@ Game::Game() {
             Interface::ScreenSurface = SDL_GetWindowSurface(Interface::Window);
             Interface::renderer = SDL_CreateRenderer(Interface::Window, -1, 0);
             TTF_Init();
-            Init();
+
+            if (Init())
+                Run();
         }
     }
 }
@@ -54,9 +56,9 @@ Game::~Game() {
     menuScreen = nullptr;
 }
 
-void Game::Init() {
+bool Game::Init() {
     menuScreen = new Image;
-    menuScreen->LoadImage("assets/img/menu_background.jpg");
+    CHECK(menuScreen->LoadImage("assets/img/menu_background.jpg"), "Eroare menuScreen->LoadImage", __LINE__, __FILE__);
     menuScreen->SetPosition(0, 0);
     menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     menuScreen->Show();
@@ -67,6 +69,8 @@ void Game::Init() {
     textFPS->SetText("FPS: 0");
     textFPS->SetPosition(10, 0);
     textFPS->Show();
+
+    return true;
 }
 
 void Game::Run() {

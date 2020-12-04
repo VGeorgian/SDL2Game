@@ -18,10 +18,7 @@ bool Interface::isRunning = true;
 vector <Interface*> Interface::uiElements;
 
 int main(void) {
-
     Game* MyGame = new Game;
-
-    MyGame->Run();
 
     delete MyGame;
     return 0;

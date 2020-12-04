@@ -23,7 +23,6 @@ void TextLine::SetFont(const char path[], const unsigned int size) {
 	Generate();
 }
 
-
 void TextLine::SetColor(uint8_t r, uint8_t g, uint8_t b) {
 	color = { r, g, b };
 	Generate();
