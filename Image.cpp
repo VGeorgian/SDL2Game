@@ -5,7 +5,7 @@ Image::Image() {
 }
 
 Image::~Image() {
-
+    SDL_DestroyTexture(texture);
 }
 
 bool Image::LoadImage(const char path[]) {
@@ -15,7 +15,7 @@ bool Image::LoadImage(const char path[]) {
     rwop = SDL_RWFromFile(path, "rb");
 
     if (!rwop) {
-        //TODO: Error
+        printf("SDL_RWFromFile: %s\n", SDL_GetError());
         return false;
     }
 

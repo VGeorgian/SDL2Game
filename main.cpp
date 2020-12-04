@@ -5,7 +5,7 @@
 #include <vector>
 #include "Game.h"
 
-//Init of all game comonents
+//Init all game components
 
 SDL_Window* Interface::Window = nullptr;
 
@@ -13,11 +13,9 @@ SDL_Surface* Interface::ScreenSurface = nullptr;
 
 SDL_Renderer* Interface::renderer = nullptr;
 
-SDL_Texture* Interface::texture = nullptr;
-
 bool Interface::isRunning = true;
 
-vector <Interface*> Interface::uiElements; // TO DO
+vector <Interface*> Interface::uiElements;
 
 int main(void) {
 

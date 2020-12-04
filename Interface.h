@@ -2,32 +2,27 @@
 #include "vector"
 #include "SDL.h"
 #include "config.h"
-// Screens Manager - Loading / Meniu / Game
 
 using namespace std;
 
-
 class Interface {
-	//The window we'll be rendering
+
 protected:
-	Interface* parent = nullptr;
-	bool b_isParent = false;
-	bool isVisible = false;
+	Interface* parent;
+	bool b_isParent;
+	bool isVisible;
 	SDL_Rect srcMask;
 	SDL_Rect dstMask;
-	int x, y; //TODO
+	int x, y;
 
 public:
 	static bool isRunning;
 
 	static SDL_Window* Window;
 
-	//The surface contained by the window
 	static SDL_Surface* ScreenSurface;
 
 	static SDL_Renderer* renderer;
-
-	static SDL_Texture* texture;
 
 	static vector <Interface*> uiElements;
 
@@ -40,8 +35,6 @@ public:
 	void SetSize(const short int width, const short int height);
 	XYPair GetSize();
 
-
-	//void Init();
 	void UpdatePosition();
 	void CheckPressedKeys() {};
 	virtual void Update() {};

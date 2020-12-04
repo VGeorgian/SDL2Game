@@ -44,12 +44,10 @@ Game::Game() {
 }
 
 Game::~Game() {
-    SDL_DestroyRenderer(Interface::renderer);
-    SDL_DestroyWindow(Interface::Window);
     TTF_Quit();
     SDL_Quit();
 
-	delete MyInterface;
+    delete MyInterface;
     MyInterface = nullptr;
 
     delete menuScreen;
@@ -77,14 +75,14 @@ void Game::Run() {
     stack <Interface*> mystack;
     stack <bool> canRender;
     bool checked[MAX_INTERFACE_ELEMENTS];
-    bool b_canRender = true;
+    bool b_canRender = true, isRunning = true;
 
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
                  tmpTime = SDL_GetTicks();
 
-    while (MyInterface->CheckIfRunning()) {
+    while (MyInterface->CheckIfRunning() && isRunning) {
         while (SDL_PollEvent(&event)) {
             /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
             switch (event.type) {
@@ -95,6 +93,9 @@ void Game::Run() {
             case SDL_KEYUP:
                 printf("Key release detected\n");
                 break;
+
+            case SDL_QUIT:
+                isRunning = false;
 
             default:
                 break;

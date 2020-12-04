@@ -6,6 +6,9 @@
 using namespace std;
 
 Interface::Interface() {
+    parent = nullptr;
+    b_isParent = false;
+    isVisible = false;
     x = 0; y = 0;
     srcMask = { 0, 0, 0, 0 };
     dstMask = { 0, 0, 0, 0 };
@@ -14,11 +17,11 @@ Interface::Interface() {
 
 Interface::~Interface() {
     SDL_FreeSurface(ScreenSurface);
-    ScreenSurface = nullptr;
 
     //Destroy window
     SDL_DestroyWindow(Window);
-    Window = nullptr;
+
+    SDL_DestroyRenderer(renderer);
 
     //Quit SDL subsystems
     SDL_Quit();

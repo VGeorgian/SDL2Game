@@ -51,8 +51,11 @@ void TextLine::Generate() {
 		if (nullptr == surface) {
 			printf("TTFError: %s\n", TTF_GetError());
 		}
-		texture = SDL_CreateTextureFromSurface(renderer, surface);
 
+		texture = SDL_CreateTextureFromSurface(renderer, surface);
+		if (nullptr == texture) {
+			printf("SDLError: %s\n", SDL_GetError());
+		}
 		SDL_FreeSurface(surface);
 
 		SDL_QueryTexture(texture, NULL, NULL, &dstMask.w, &dstMask.h);
