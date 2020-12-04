@@ -166,7 +166,8 @@ void Game::Run() {
             ++i;
         }
 
-        SDL_RenderPresent(Interface::renderer);
+        if (b_canRender)
+            SDL_RenderPresent(Interface::renderer);
 
 	}
 }
