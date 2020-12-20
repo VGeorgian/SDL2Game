@@ -35,5 +35,4 @@ void Image::Render() {
     if (texture) {
         SDL_RenderCopy(renderer, texture, NULL, &dstMask);
     }
-
 }

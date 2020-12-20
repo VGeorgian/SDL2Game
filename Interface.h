@@ -48,4 +48,11 @@ public:
 	bool isShow() { return isVisible; };
 	void Show() { isVisible = true; };
 	void Hide() { isVisible = false; }
+
+	void OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y);
+	virtual void OnLeftClick(const int& x, const int& y);
+	virtual void OnRightClick(const int& x, const int& y);
+
+	void OnKeyPress(bool KEYS[], unsigned int currentKey);
+	void OnKeyRelease(unsigned int currentKey);
 };

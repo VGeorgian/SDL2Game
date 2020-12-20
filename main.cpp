@@ -18,8 +18,17 @@ bool Interface::isRunning = true;
 vector <Interface*> Interface::uiElements;
 
 int main(void) {
-    Game* MyGame = new Game;
+    bool succes;
+    Game MyGame;
 
-    delete MyGame;
+    CHECK(MyGame.Init(), "MyGame.Init()", __LINE__, __FILE__);
+
+    MyGame.Run();
+
+    SDL_FreeSurface(Interface::ScreenSurface);
+    SDL_DestroyWindow(Interface::Window);
+    SDL_DestroyRenderer(Interface::renderer);
+    SDL_Quit();
+
     return 0;
 }

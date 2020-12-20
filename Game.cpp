@@ -10,55 +10,38 @@
 
 using namespace std;
 
-Game::Game() {
-    menuScreen = nullptr;
-    textFPS = nullptr;
-    isRunning = true;
-
-	MyInterface = new Interface;
-	//MyInterface->Init();
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        isRunning = false;
-    }
-    else {
-        Interface::Window = SDL_CreateWindow("SDL Tutorial",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN
-        );
-
-        if (Interface::Window == nullptr) {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-            isRunning = false;
-        }
-        else {
-            Interface::ScreenSurface = SDL_GetWindowSurface(Interface::Window);
-            Interface::renderer = SDL_CreateRenderer(Interface::Window, -1, 0);
-            TTF_Init();
-
-            if (Init())
-                Run();
-        }
-    }
-}
-
-Game::~Game() {
-    TTF_Quit();
-    SDL_Quit();
-
-    delete MyInterface;
-    MyInterface = nullptr;
-
-    delete menuScreen;
-    menuScreen = nullptr;
-}
-
 bool Game::Init() {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        CHECK_ERROR(false, "SDL-ul nu s-a putut initializa", SDL_GetError(), __LINE__, __FILE__);
+    }
+
+    Interface::Window = SDL_CreateWindow("SDL Tutorial",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
+        SDL_WINDOW_SHOWN
+    );
+
+    CHECK_ERROR(Interface::Window, "Eroare la initializarea ferestrei", TTF_GetError(), __LINE__, __FILE__);
+
+    Interface::ScreenSurface = SDL_GetWindowSurface(Interface::Window);
+    CHECK_ERROR(Interface::ScreenSurface, "Eroare la initializarea suprafetei", SDL_GetError(), __LINE__, __FILE__);
+
+    Interface::renderer = SDL_CreateRenderer(Interface::Window, -1, 0);
+    CHECK_ERROR(Interface::renderer, "Eroare la initializarea renderer-ului", SDL_GetError(), __LINE__, __FILE__);
+
+    if (TTF_Init() == -1) {
+        CHECK_ERROR(false, "Eroare la initializarea font-ului", TTF_GetError(), __LINE__, __FILE__);
+    }
+    // TODO: Verificare init in main si apelare run
+    //return false;
+
+
+    MyInterface = new Interface;
+
     menuScreen = new Image;
-    CHECK(menuScreen->LoadImage("assets/img/menu_background.jpg"), "Eroare menuScreen->LoadImage", __LINE__, __FILE__);
+    CHECK(menuScreen->LoadImage("assets/img/menu_background.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
     menuScreen->SetPosition(0, 0);
     menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     menuScreen->Show();
@@ -73,18 +56,43 @@ bool Game::Init() {
     return true;
 }
 
+Game::Game() {
+    isRunning = true;
+    MyInterface = nullptr;
+    menuScreen = nullptr;
+
+    textFPS = nullptr;
+
+   
+}
+
+Game::~Game() {
+    TTF_Quit();
+    // SDL_StopTextInput();
+
+    delete MyInterface;
+    MyInterface = nullptr;
+
+    delete menuScreen;
+    menuScreen = nullptr;
+}
+
+
+
 void Game::Run() {
-    int i, currentFPS = 0;
+    int i, currentFPS = 0, mouseX, mouseY;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
     bool checked[MAX_INTERFACE_ELEMENTS];
-    bool b_canRender = true, isRunning = true;
-
+    bool b_canRender = true;
+    bool KEYS[322];
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
                  tmpTime = SDL_GetTicks();
+
+    memset(KEYS, 0, sizeof(bool) * 322);
 
     while (MyInterface->CheckIfRunning() && isRunning) {
         while (SDL_PollEvent(&event)) {
@@ -92,10 +100,26 @@ void Game::Run() {
             switch (event.type) {
             case SDL_KEYDOWN:
                 printf("Key press detected\n");
+                KEYS[event.key.keysym.sym] = true;
+                for (auto it : MyInterface->uiElements) {
+                    it->OnKeyPress(KEYS, event.key.keysym.sym);
+                }
                 break;
 
             case SDL_KEYUP:
                 printf("Key release detected\n");
+                KEYS[event.key.keysym.sym] = false;
+                for (auto it : MyInterface->uiElements) {
+                    it->OnKeyRelease(event.key.keysym.sym);
+                }
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                printf("Mouse click detected\n");
+                SDL_GetMouseState(&mouseX, &mouseY);
+                for (auto it : MyInterface->uiElements) {
+                    it->OnMouseClick(event.button, mouseX, mouseY);
+                }
                 break;
 
             case SDL_QUIT:
@@ -130,20 +154,20 @@ void Game::Run() {
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
-        for (vector<Interface*>::iterator it = MyInterface->uiElements.begin(); it != MyInterface->uiElements.end(); ++it) {
+        for (auto it : MyInterface->uiElements) {
             
-            if ((*it)->GetParent() == nullptr) {
-                (*it)->CheckPressedKeys();
-                (*it)->Update();
-                if((*it)->isShow() && b_canRender)
-                    (*it)->Render();
+            if (it->GetParent() == nullptr) {
+                it->CheckPressedKeys();
+                it->Update();
+                if(it->isShow() && b_canRender)
+                    it->Render();
 
                 checked[i] = true;
 
                 //Verific daca e parinte si ii caut toti copiii
-                if ((*it)->isParent()) {
-                    mystack.push((*it));
-                    canRender.push((*it)->isShow());
+                if (it->isParent()) {
+                    mystack.push(it);
+                    canRender.push(it->isShow());
 
                     for (int j = 0; j < MyInterface->uiElements.size(); ++j) {
                         if (!checked[j]) {

@@ -16,6 +16,6 @@ public:
 	//void SetText(char* text);
 	void SetText(const char sourceText[]);
 	void SetFont(const char path[], const unsigned int size);
-	void Generate();
+	void GenerateTexture();
 	void Render();
 };

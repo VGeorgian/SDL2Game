@@ -16,15 +16,7 @@ Interface::Interface() {
 }
 
 Interface::~Interface() {
-    SDL_FreeSurface(ScreenSurface);
-
-    //Destroy window
-    SDL_DestroyWindow(Window);
-
-    SDL_DestroyRenderer(renderer);
-
-    //Quit SDL subsystems
-    SDL_Quit();
+    
 }
 
 bool Interface::CheckIfRunning() {
@@ -68,4 +60,28 @@ void Interface::UpdatePosition() {
 void Interface::SetParent(Interface* parent) {
     this->parent = parent;
     this->parent->b_isParent = true;
+}
+
+void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y) {
+    if (b.button == SDL_BUTTON_LEFT)
+        OnLeftClick(x, y);
+    else OnRightClick(x, y);
+}
+
+void Interface::OnLeftClick(const int& x, const int& y) {
+    cout << "Click stanga la " << x << " " << y << endl;
+}
+
+void Interface::OnRightClick(const int& x, const int& y) {
+    cout << "Click dreapta la " << x << " " << y << endl;
+}
+
+void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
+    if(currentKey == SDLK_a)
+        cout << "Am apasat a: " << currentKey << endl;
+}
+
+void Interface::OnKeyRelease(unsigned int currentKey) {
+    if (currentKey == SDLK_a)
+        cout << "Am ridicat a: " << currentKey << endl;
 }
