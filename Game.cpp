@@ -10,6 +10,18 @@
 
 using namespace std;
 
+Game::Game() {
+    isRunning = true;
+
+    MyInterface = nullptr;
+    menuScreen = nullptr;
+    board = nullptr;
+    board2 = nullptr;
+
+    boardText = nullptr;
+    textFPS = nullptr;
+}
+
 bool Game::Init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         CHECK_ERROR(false, "SDL-ul nu s-a putut initializa", SDL_GetError(), __LINE__, __FILE__);
@@ -38,7 +50,7 @@ bool Game::Init() {
     //return false;
 
 
-    MyInterface = new Interface;
+    MyInterface = new Interface(true);
 
     menuScreen = new Image;
     CHECK(menuScreen->LoadImage("assets/img/menu_background.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
@@ -53,17 +65,29 @@ bool Game::Init() {
     textFPS->SetPosition(10, 0);
     textFPS->Show();
 
+    board2 = new Image;
+    CHECK(board2->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
+    board2->SetPosition(10, 50);
+    board2->SetSize(500, 500);
+    board2->SetFocus();
+    board2->Show();
+
+    board = new Image;
+    CHECK(board->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
+    board->SetPosition(300, 10);
+    board->SetSize(500, 500);
+    board->SetFocus();
+    board->Show();
+
+    boardText = new TextLine;
+    boardText->SetParent(board);
+    boardText->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
+    boardText->SetColor(255, 255, 255);
+    boardText->SetText("Cel mai cel text");
+    boardText->SetPosition(100, 200);
+    boardText->Show();
+
     return true;
-}
-
-Game::Game() {
-    isRunning = true;
-    MyInterface = nullptr;
-    menuScreen = nullptr;
-
-    textFPS = nullptr;
-
-   
 }
 
 Game::~Game() {
@@ -80,7 +104,8 @@ Game::~Game() {
 
 
 void Game::Run() {
-    int i, currentFPS = 0, mouseX, mouseY;
+    int x = 0;
+    int i, currentFPS = 0, mouseX, mouseY, pos;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
@@ -90,11 +115,14 @@ void Game::Run() {
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
-                 tmpTime = SDL_GetTicks();
+                 tmpTime = SDL_GetTicks(); //Update text fps la fiecare secunda
 
     memset(KEYS, 0, sizeof(bool) * 322);
 
+    auto interfaceBegin = MyInterface->uiElements.begin();
+
     while (MyInterface->CheckIfRunning() && isRunning) {
+
         while (SDL_PollEvent(&event)) {
             /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
             switch (event.type) {
@@ -117,9 +145,21 @@ void Game::Run() {
             case SDL_MOUSEBUTTONDOWN:
                 printf("Mouse click detected\n");
                 SDL_GetMouseState(&mouseX, &mouseY);
+                pos = -1;
+                i = -1;
                 for (auto it : MyInterface->uiElements) {
+                    ++i;
                     it->OnMouseClick(event.button, mouseX, mouseY);
+                    if (it->CheckFocus(mouseX, mouseY)) {
+                        pos = i;
+                    }
                 }
+
+                if (pos != -1) {
+                    MyInterface->uiElements.push_back(interfaceBegin[pos]);
+                    MyInterface->uiElements.erase(interfaceBegin + pos);
+                }
+
                 break;
 
             case SDL_QUIT:
@@ -171,29 +211,28 @@ void Game::Run() {
 
                     for (int j = 0; j < MyInterface->uiElements.size(); ++j) {
                         if (!checked[j]) {
-                            if ((*(MyInterface->uiElements.begin() + j))->GetParent() == mystack.top()) {
+                            if ((*(interfaceBegin + j))->GetParent() == mystack.top()) {
 
                                 //Verific daca parintii lui sunt afisati
-                                if ((*(MyInterface->uiElements.begin() + j))->isParent()) {
+                                if ((*(interfaceBegin + j))->isParent()) {
                                     if (canRender.top())
-                                        canRender.push((*(MyInterface->uiElements.begin() + j))->isShow());
+                                        canRender.push((*(interfaceBegin + j))->isShow());
                                     else
                                         canRender.push(false);
                                 }
 
-                                (*(MyInterface->uiElements.begin() + j))->CheckPressedKeys();
-                                (*(MyInterface->uiElements.begin() + j))->Update();
-                                (*(MyInterface->uiElements.begin() + j))->UpdatePosition();
+                                (*(interfaceBegin + j))->CheckPressedKeys();
+                                (*(interfaceBegin + j))->Update();
+                                (*(interfaceBegin + j))->UpdatePosition();
 
-                                //Verific daca parintii lui sunt vizibili
                                 //Daca nu are parinti, verific daca el este vizibil
-                                if(canRender.top() && (*(MyInterface->uiElements.begin() + j))->isShow())
-                                    (*(MyInterface->uiElements.begin() + j))->Render();
+                                if(canRender.top() && (*(interfaceBegin + j))->isShow())
+                                    (*(interfaceBegin + j))->Render();
 
                                 checked[j] = true;
 
-                                if ((*(MyInterface->uiElements.begin() + j))->isParent()) {
-                                    mystack.push((*(MyInterface->uiElements.begin() + j)));
+                                if ((*(interfaceBegin + j))->isParent()) {
+                                    mystack.push((*(interfaceBegin + j)));
                                    
                                     j = -1;
                                 }

@@ -11,6 +11,10 @@ private:
 
 	Image* menuScreen;
 	TextLine* textFPS;
+	Image* board;
+
+	Image* board2;
+	TextLine* boardText;
 public:
 	Game();
 	~Game();

@@ -14,6 +14,7 @@ protected:
 	SDL_Rect srcMask;
 	SDL_Rect dstMask;
 	int x, y;
+	bool isFocusable;
 
 public:
 	static bool isRunning;
@@ -26,7 +27,7 @@ public:
 
 	static vector <Interface*> uiElements;
 
-	Interface();
+	Interface(bool root = false);
 	~Interface();
 
 	void SetPosition(const short int x, const short int y);
@@ -52,6 +53,9 @@ public:
 	void OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y);
 	virtual void OnLeftClick(const int& x, const int& y);
 	virtual void OnRightClick(const int& x, const int& y);
+
+	bool CheckFocus(const int& x, const int& y);
+	void SetFocus();
 
 	void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	void OnKeyRelease(unsigned int currentKey);

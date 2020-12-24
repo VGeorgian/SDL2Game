@@ -11,11 +11,11 @@ class TextLine : public Interface {
 public:
 	TextLine();
 	~TextLine();
-	void SetColor(uint8_t r, uint8_t g, uint8_t b);
-	void SetColor(SDL_Color color);
+	bool SetColor(uint8_t r, uint8_t g, uint8_t b);
+	bool SetColor(SDL_Color color);
 	//void SetText(char* text);
-	void SetText(const char sourceText[]);
-	void SetFont(const char path[], const unsigned int size);
-	void GenerateTexture();
+	bool SetText(const char sourceText[]);
+	bool SetFont(const char path[], const unsigned int size);
+	bool GenerateTexture();
 	void Render();
 };

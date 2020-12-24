@@ -6,7 +6,7 @@ TextLine::TextLine():Interface() {
 	font = nullptr;
 	texture = nullptr;
 	text = new char[1];
-	text[0] = '0';
+	text[0] = '-';
 	color = { 255, 255, 255 };
 }
 
@@ -19,25 +19,33 @@ TextLine::~TextLine() {
 		delete[] text;
 }
 
-void TextLine::SetFont(const char path[], const unsigned int size) {
+bool TextLine::SetFont(const char path[], const unsigned int size) {
 	font = TTF_OpenFont(path, size);
-	if (nullptr == font) {
-		printf("TTF_OpenFont: %s\n", TTF_GetError());
-	}
-	else GenerateTexture();
+
+	CHECK_ERROR(font, "TTF_OpenFont(path, size)", TTF_GetError(), __LINE__, __FILE__);
+	
+	CHECK(GenerateTexture(), "GenerateTexture()", __LINE__, __FILE__);
+
+	return true;
 }
 
-void TextLine::SetColor(uint8_t r, uint8_t g, uint8_t b) {
+bool TextLine::SetColor(uint8_t r, uint8_t g, uint8_t b) {
 	color = { r, g, b };
-	GenerateTexture();
+
+	CHECK(GenerateTexture(), "GenerateTexture()", __LINE__, __FILE__);
+
+	return true;
 }
 
-void TextLine::SetColor(SDL_Color color) {
+bool TextLine::SetColor(SDL_Color color) {
 	this->color = color;
-	GenerateTexture();
+
+	CHECK(GenerateTexture(), "GenerateTexture()", __LINE__, __FILE__);
+
+	return true;
 }
 
-void TextLine::SetText(const char sourceText[]) {
+bool TextLine::SetText(const char sourceText[]) {
 	if (nullptr != text) {
 		delete[] text;
 		text = nullptr;
@@ -45,26 +53,32 @@ void TextLine::SetText(const char sourceText[]) {
 
 	text = new char[strlen(sourceText) + 1];
 	strcpy_s(text, strlen(sourceText) + 1, sourceText);
-	GenerateTexture();
+	CHECK(GenerateTexture(), "GenerateTexture()", __LINE__, __FILE__);
+
+	return true;
 }
 
-void TextLine::GenerateTexture() {
+bool TextLine::GenerateTexture() {
 	if (nullptr != font) {
 		SDL_Surface* surface = TTF_RenderText_Blended(font, text, color);
-		if (nullptr == surface) {
-			printf("TTFError: %s\n", TTF_GetError());
-		}
 
-		//if(nullptr != )
+		CHECK_ERROR(surface, "TTF_RenderText_Blended(font, text, color)", TTF_GetError(), __LINE__, __FILE__);
+
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		if (nullptr == texture) {
-			printf("SDLError: %s\n", SDL_GetError());
+			SDL_FreeSurface(surface);
 		}
+		CHECK_ERROR(texture, "SDL_CreateTextureFromSurface(renderer, surface)", SDL_GetError(), __LINE__, __FILE__);
 
 		SDL_FreeSurface(surface);
+		surface = nullptr;
 
 		SDL_QueryTexture(texture, NULL, NULL, &dstMask.w, &dstMask.h);
+
+		return true;
 	}
+
+	return false;
 }
 
 void TextLine::Render(){

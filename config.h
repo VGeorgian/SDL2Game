@@ -15,7 +15,7 @@
     }\
 }
 
-#define CHECK_ERROR(condition, message, detailedMessage, line, file, ...) {\
+#define CHECK_ERROR(condition, message, detailedMessage, line, file) {\
     if(!(condition)) {\
         printf("ERROR: - file: %s la linia %d:\n%s\nDetaliat: %s\n\n", file, line, message, detailedMessage);\
         return false;\

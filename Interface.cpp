@@ -5,22 +5,38 @@
 
 using namespace std;
 
-Interface::Interface() {
+Interface::Interface(bool root) {
     parent = nullptr;
     b_isParent = false;
     isVisible = false;
     x = 0; y = 0;
     srcMask = { 0, 0, 0, 0 };
     dstMask = { 0, 0, 0, 0 };
-    uiElements.push_back(this);
+    if(!root)
+        uiElements.push_back(this);
+    isFocusable = false;
 }
 
 Interface::~Interface() {
     
 }
 
+bool Interface::CheckFocus(const int& x, const int& y) {
+    if (isFocusable && ( 
+        x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+        y > dstMask.y && y < (dstMask.y + dstMask.h)
+        )) {
+        return true;
+    }
+    return false;
+}
+
 bool Interface::CheckIfRunning() {
 	return isRunning;
+}
+
+void Interface::SetFocus() {
+    isFocusable = true;
 }
 
 void Interface::SetPosition(const short int x, const short int y) {
