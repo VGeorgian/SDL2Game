@@ -19,6 +19,7 @@ Game::Game() {
     board2 = nullptr;
 
     boardText = nullptr;
+    boardText2 = nullptr;
     textFPS = nullptr;
 }
 
@@ -70,6 +71,7 @@ bool Game::Init() {
     board2->SetPosition(10, 50);
     board2->SetSize(500, 500);
     board2->SetFocus();
+    board2->AddMovableTag();
     board2->Show();
 
     board = new Image;
@@ -77,15 +79,35 @@ bool Game::Init() {
     board->SetPosition(300, 10);
     board->SetSize(500, 500);
     board->SetFocus();
+    board->AddMovableTag();
+    board->SetHorizontalCenterPosition();
     board->Show();
+
+    board3 = new Image;
+    board3->SetParent(board);
+    CHECK(board3->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
+    board3->SetPosition(200, 200);
+    board3->SetSize(500, 500);
+    board3->Show();
 
     boardText = new TextLine;
     boardText->SetParent(board);
     boardText->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
     boardText->SetColor(255, 255, 255);
-    boardText->SetText("Cel mai cel text");
+    boardText->SetText("Board1");
     boardText->SetPosition(100, 200);
+    boardText->SetHorizontalCenterPosition();
     boardText->Show();
+
+    boardText2 = new TextLine;
+    boardText2->SetParent(board2);
+    boardText2->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
+    boardText2->SetColor(255, 255, 255);
+    boardText2->SetText("Board2");
+    boardText2->SetPosition(100, 200);
+    boardText2->SetHorizontalCenterPosition();
+    boardText2->Show();
+
 
     return true;
 }
@@ -117,47 +139,63 @@ void Game::Run() {
                  renderInterval = 1000 / MAX_FPS,
                  tmpTime = SDL_GetTicks(); //Update text fps la fiecare secunda
 
+    Interface* tmpInterface;
+
     memset(KEYS, 0, sizeof(bool) * 322);
 
     auto interfaceBegin = MyInterface->uiElements.begin();
 
     while (MyInterface->CheckIfRunning() && isRunning) {
-
+        SDL_GetMouseState(&mouseX, &mouseY);
         while (SDL_PollEvent(&event)) {
             /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
             switch (event.type) {
             case SDL_KEYDOWN:
-                printf("Key press detected\n");
-                KEYS[event.key.keysym.sym] = true;
-                for (auto it : MyInterface->uiElements) {
-                    it->OnKeyPress(KEYS, event.key.keysym.sym);
+                printf("Key press detected: %d\n", event.key.keysym.sym);
+                if (event.key.keysym.sym < 322) {
+                    KEYS[event.key.keysym.sym] = true;
+                    for (auto it : MyInterface->uiElements) {
+                        it->OnKeyPress(KEYS, event.key.keysym.sym);
+                    }
                 }
                 break;
 
             case SDL_KEYUP:
-                printf("Key release detected\n");
-                KEYS[event.key.keysym.sym] = false;
-                for (auto it : MyInterface->uiElements) {
-                    it->OnKeyRelease(event.key.keysym.sym);
+                printf("Key release detected: %d\n", event.key.keysym.sym);
+                if (event.key.keysym.sym < 322) {
+                    KEYS[event.key.keysym.sym] = false;
+                    for (auto it : MyInterface->uiElements) {
+                        it->OnKeyRelease(event.key.keysym.sym);
+                    }
                 }
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
                 printf("Mouse click detected\n");
-                SDL_GetMouseState(&mouseX, &mouseY);
                 pos = -1;
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
                     ++i;
                     it->OnMouseClick(event.button, mouseX, mouseY);
+                    //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
                         pos = i;
                     }
                 }
 
                 if (pos != -1) {
-                    MyInterface->uiElements.push_back(interfaceBegin[pos]);
+                    tmpInterface = interfaceBegin[pos];
+                    interfaceBegin[pos]->SetCursorFollwing(true, mouseX, mouseY);
                     MyInterface->uiElements.erase(interfaceBegin + pos);
+                    MyInterface->uiElements.push_back(tmpInterface);
+                }
+
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+                printf("Mouse release detected\n");
+                for (auto it : MyInterface->uiElements) {
+                    it->SetCursorFollwing(false);
                 }
 
                 break;
@@ -194,9 +232,11 @@ void Game::Run() {
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
+
         for (auto it : MyInterface->uiElements) {
             
             if (it->GetParent() == nullptr) {
+                it->UpdateFollowingPosition(mouseX, mouseY);
                 it->CheckPressedKeys();
                 it->Update();
                 if(it->isShow() && b_canRender)
@@ -211,7 +251,7 @@ void Game::Run() {
 
                     for (int j = 0; j < MyInterface->uiElements.size(); ++j) {
                         if (!checked[j]) {
-                            if ((*(interfaceBegin + j))->GetParent() == mystack.top()) {
+                            if (!mystack.empty() && (*(interfaceBegin + j))->GetParent() == mystack.top()) {
 
                                 //Verific daca parintii lui sunt afisati
                                 if ((*(interfaceBegin + j))->isParent()) {
@@ -221,6 +261,7 @@ void Game::Run() {
                                         canRender.push(false);
                                 }
 
+                                (*(interfaceBegin + j))->UpdateFollowingPosition(mouseX, mouseY);
                                 (*(interfaceBegin + j))->CheckPressedKeys();
                                 (*(interfaceBegin + j))->Update();
                                 (*(interfaceBegin + j))->UpdatePosition();

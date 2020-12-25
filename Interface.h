@@ -15,6 +15,9 @@ protected:
 	SDL_Rect dstMask;
 	int x, y;
 	bool isFocusable;
+	bool isMovable;
+	bool followCursor;
+	int followingX, followingY;
 
 public:
 	static bool isRunning;
@@ -30,6 +33,7 @@ public:
 	Interface(bool root = false);
 	~Interface();
 
+	void SetHorizontalCenterPosition();
 	void SetPosition(const short int x, const short int y);
 	XYPair GetPosition();
 
@@ -56,6 +60,11 @@ public:
 
 	bool CheckFocus(const int& x, const int& y);
 	void SetFocus();
+
+	void AddMovableTag();
+	bool IsMovable();
+	void SetCursorFollwing(const bool state, const int& x = 0, const int& y = 0);
+	void UpdateFollowingPosition(const int& x, const int& y);
 
 	void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	void OnKeyRelease(unsigned int currentKey);

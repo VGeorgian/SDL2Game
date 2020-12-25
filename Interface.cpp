@@ -15,10 +15,40 @@ Interface::Interface(bool root) {
     if(!root)
         uiElements.push_back(this);
     isFocusable = false;
+    isMovable = false;
+    followCursor = false;
+
+    followingX = 0;
+    followingY = 0;
 }
 
 Interface::~Interface() {
     
+}
+
+void Interface::AddMovableTag() {
+    isMovable = true;
+}
+
+bool Interface::IsMovable() {
+    return isMovable;
+}
+
+void Interface::SetCursorFollwing(const bool state, const int& x, const int& y){
+    if (!isMovable)
+        return;
+
+    followCursor = state;
+    followingX = x - dstMask.x;
+    followingY = y - dstMask.y;
+}
+
+void Interface::UpdateFollowingPosition(const int& x, const int& y) {
+    if (!(isMovable && followCursor))
+        return;
+
+    dstMask.x = x - followingX;
+    dstMask.y = y - followingY;
 }
 
 bool Interface::CheckFocus(const int& x, const int& y) {
@@ -31,12 +61,17 @@ bool Interface::CheckFocus(const int& x, const int& y) {
     return false;
 }
 
+void Interface::SetFocus() {
+    isFocusable = true;
+}
+
 bool Interface::CheckIfRunning() {
 	return isRunning;
 }
 
-void Interface::SetFocus() {
-    isFocusable = true;
+void Interface::SetHorizontalCenterPosition() {
+    int width = GetParent() ? GetParent()->GetSize().x : SCREEN_WIDTH;
+    dstMask.x = (width - dstMask.w) / 2;
 }
 
 void Interface::SetPosition(const short int x, const short int y) {
@@ -85,11 +120,11 @@ void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y
 }
 
 void Interface::OnLeftClick(const int& x, const int& y) {
-    cout << "Click stanga la " << x << " " << y << endl;
+    //cout << "Click stanga la " << x << " " << y << endl;
 }
 
 void Interface::OnRightClick(const int& x, const int& y) {
-    cout << "Click dreapta la " << x << " " << y << endl;
+    //cout << "Click dreapta la " << x << " " << y << endl;
 }
 
 void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
