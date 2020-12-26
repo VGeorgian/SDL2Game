@@ -4,9 +4,13 @@
 #define FPS_LIMIT 1
 #define MAX_INTERFACE_ELEMENTS 124
 
+#define KEYS_NUMBER 322
+
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define DEBUG 1
+
+
 
 #define CHECK(condition, message, line, file) {\
     if(!(condition)) {\

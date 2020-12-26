@@ -90,15 +90,6 @@ bool Game::Init() {
     board3->SetSize(500, 500);
     board3->Show();
 
-    boardText = new TextLine;
-    boardText->SetParent(board);
-    boardText->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
-    boardText->SetColor(255, 255, 255);
-    boardText->SetText("Board1");
-    boardText->SetPosition(100, 200);
-    boardText->SetHorizontalCenterPosition();
-    boardText->Show();
-
     boardText2 = new TextLine;
     boardText2->SetParent(board2);
     boardText2->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
@@ -107,6 +98,15 @@ bool Game::Init() {
     boardText2->SetPosition(100, 200);
     boardText2->SetHorizontalCenterPosition();
     boardText2->Show();
+
+    boardText = new TextLine;
+    boardText->SetParent(board3);
+    boardText->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
+    boardText->SetColor(255, 255, 255);
+    boardText->SetText("Board1");
+    boardText->SetPosition(0, 0);
+    boardText->SetHorizontalCenterPosition();
+    boardText->Show();
 
 
     return true;
@@ -133,15 +133,16 @@ void Game::Run() {
     stack <bool> canRender;
     bool checked[MAX_INTERFACE_ELEMENTS];
     bool b_canRender = true;
-    bool KEYS[322];
+    bool KEYS[KEYS_NUMBER];
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
                  tmpTime = SDL_GetTicks(); //Update text fps la fiecare secunda
 
     Interface* tmpInterface;
+    char tmpBuffer[10];
 
-    memset(KEYS, 0, sizeof(bool) * 322);
+    memset(KEYS, 0, sizeof(bool) * KEYS_NUMBER);
 
     auto interfaceBegin = MyInterface->uiElements.begin();
 
@@ -152,7 +153,7 @@ void Game::Run() {
             switch (event.type) {
             case SDL_KEYDOWN:
                 printf("Key press detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.sym < 322) {
+                if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = true;
                     for (auto it : MyInterface->uiElements) {
                         it->OnKeyPress(KEYS, event.key.keysym.sym);
@@ -162,7 +163,7 @@ void Game::Run() {
 
             case SDL_KEYUP:
                 printf("Key release detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.sym < 322) {
+                if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = false;
                     for (auto it : MyInterface->uiElements) {
                         it->OnKeyRelease(event.key.keysym.sym);
@@ -179,13 +180,26 @@ void Game::Run() {
                     it->OnMouseClick(event.button, mouseX, mouseY);
                     //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
-                        pos = i;
+                        if (it->IsFocusable())
+                            pos = i;
+                        else
+                            pos = -1;
                     }
                 }
 
                 if (pos != -1) {
                     tmpInterface = interfaceBegin[pos];
-                    interfaceBegin[pos]->SetCursorFollwing(true, mouseX, mouseY);
+
+                    i = 1;
+                    for (auto it : MyInterface->uiElements) {
+                        if (it->GetParent() == interfaceBegin[pos] && it->CheckFocus(mouseX, mouseY)) {
+                            i = 0;
+                            break;
+                        }
+                    }
+
+                    if(i)
+                        interfaceBegin[pos]->SetCursorFollwing(true, mouseX, mouseY);
                     MyInterface->uiElements.erase(interfaceBegin + pos);
                     MyInterface->uiElements.push_back(tmpInterface);
                 }
@@ -215,7 +229,6 @@ void Game::Run() {
                 if (currentRenderTime > tmpTime + 1000) {
                     tmpTime = currentRenderTime;
                     //printf("FPS-uri: %d\n", currentFPS);
-                    char tmpBuffer[10];
                     snprintf(tmpBuffer, 10, "FPS: %d", currentFPS);
                     textFPS->SetText(tmpBuffer);
                     currentFPS = 1;
@@ -239,8 +252,9 @@ void Game::Run() {
                 it->UpdateFollowingPosition(mouseX, mouseY);
                 it->CheckPressedKeys();
                 it->Update();
-                if(it->isShow() && b_canRender)
+                if (it->isShow() && b_canRender) {
                     it->Render();
+                }
 
                 checked[i] = true;
 
@@ -251,41 +265,46 @@ void Game::Run() {
 
                     for (int j = 0; j < MyInterface->uiElements.size(); ++j) {
                         if (!checked[j]) {
-                            if (!mystack.empty() && (*(interfaceBegin + j))->GetParent() == mystack.top()) {
+                            if (!mystack.empty() && interfaceBegin[j]->GetParent() == mystack.top()) {
 
                                 //Verific daca parintii lui sunt afisati
-                                if ((*(interfaceBegin + j))->isParent()) {
+                                if (interfaceBegin[j]->isParent()) {
                                     if (canRender.top())
-                                        canRender.push((*(interfaceBegin + j))->isShow());
+                                        canRender.push(interfaceBegin[j]->isShow());
                                     else
                                         canRender.push(false);
                                 }
 
-                                (*(interfaceBegin + j))->UpdateFollowingPosition(mouseX, mouseY);
-                                (*(interfaceBegin + j))->CheckPressedKeys();
-                                (*(interfaceBegin + j))->Update();
-                                (*(interfaceBegin + j))->UpdatePosition();
+                                interfaceBegin[j]->UpdateFollowingPosition(mouseX, mouseY);
+                                interfaceBegin[j]->CheckPressedKeys();
+                                interfaceBegin[j]->Update();
+                                interfaceBegin[j]->UpdatePosition();
 
                                 //Daca nu are parinti, verific daca el este vizibil
-                                if(canRender.top() && (*(interfaceBegin + j))->isShow())
-                                    (*(interfaceBegin + j))->Render();
+                                if(canRender.top() && interfaceBegin[j]->isShow() && b_canRender)
+                                    interfaceBegin[j]->Render();
 
                                 checked[j] = true;
 
-                                if ((*(interfaceBegin + j))->isParent()) {
-                                    mystack.push((*(interfaceBegin + j)));
-                                   
+                                if (interfaceBegin[j]->isParent()) {
+                                    mystack.push(interfaceBegin[j]);
+                                    cout << "Am gasit parinte:\n";
                                     j = -1;
                                 }
 
                                 //Daca s-a ajuns la ultimul element si stiva mai 
                                 //are elemente, elimin ultimul element
-                                else if (j == MyInterface->uiElements.size() - 1 && !mystack.empty()) {
+                                /*else if (j == MyInterface->uiElements.size() - 1) {
                                     mystack.pop();
                                     canRender.pop();
                                     j = -1;
-                                }
+                                }*/
                             }
+                        }
+                        if ((j == MyInterface->uiElements.size() - 1) && !mystack.empty()) {
+                            mystack.pop();
+                            canRender.pop();
+                            j = -1;
                         }
                     }
                 }
@@ -296,5 +315,6 @@ void Game::Run() {
         if (b_canRender)
             SDL_RenderPresent(Interface::renderer);
 
+        //SDL_Delay(1000);
 	}
 }

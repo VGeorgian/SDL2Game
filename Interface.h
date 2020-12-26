@@ -14,7 +14,7 @@ protected:
 	SDL_Rect srcMask;
 	SDL_Rect dstMask;
 	int x, y;
-	bool isFocusable;
+	bool b_isFocusable;
 	bool isMovable;
 	bool followCursor;
 	int followingX, followingY;
@@ -60,6 +60,7 @@ public:
 
 	bool CheckFocus(const int& x, const int& y);
 	void SetFocus();
+	bool IsFocusable() { return b_isFocusable; };
 
 	void AddMovableTag();
 	bool IsMovable();

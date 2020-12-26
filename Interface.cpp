@@ -14,7 +14,7 @@ Interface::Interface(bool root) {
     dstMask = { 0, 0, 0, 0 };
     if(!root)
         uiElements.push_back(this);
-    isFocusable = false;
+    b_isFocusable = false;
     isMovable = false;
     followCursor = false;
 
@@ -52,17 +52,15 @@ void Interface::UpdateFollowingPosition(const int& x, const int& y) {
 }
 
 bool Interface::CheckFocus(const int& x, const int& y) {
-    if (isFocusable && ( 
-        x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-        y > dstMask.y && y < (dstMask.y + dstMask.h)
-        )) {
+    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
         return true;
     }
     return false;
 }
 
 void Interface::SetFocus() {
-    isFocusable = true;
+    b_isFocusable = true;
 }
 
 bool Interface::CheckIfRunning() {
