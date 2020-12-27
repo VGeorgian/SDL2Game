@@ -18,6 +18,7 @@ protected:
 	bool isMovable;
 	bool followCursor;
 	int followingX, followingY;
+	bool isMouseIn;
 
 public:
 	static bool isRunning;
@@ -66,6 +67,10 @@ public:
 	bool IsMovable();
 	void SetCursorFollwing(const bool state, const int& x = 0, const int& y = 0);
 	void UpdateFollowingPosition(const int& x, const int& y);
+
+	void VerifyMouseState(const int& x = 0, const int& y = 0);
+	virtual void OnMouseIn();
+	virtual void OnMouseOut();
 
 	void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	void OnKeyRelease(unsigned int currentKey);

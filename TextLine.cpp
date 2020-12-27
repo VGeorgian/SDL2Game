@@ -29,6 +29,10 @@ bool TextLine::SetFont(const char path[], const unsigned int size) {
 	return true;
 }
 
+TTF_Font* TextLine::GetFont() {
+	return font;
+}
+
 bool TextLine::SetColor(uint8_t r, uint8_t g, uint8_t b) {
 	color = { r, g, b };
 

@@ -18,7 +18,6 @@ bool Interface::isRunning = true;
 vector <Interface*> Interface::uiElements;
 
 int main(void) {
-    bool succes;
     Game MyGame;
 
     CHECK(MyGame.Init(), "MyGame.Init()", __LINE__, __FILE__);

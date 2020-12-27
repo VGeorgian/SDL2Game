@@ -20,11 +20,38 @@ Interface::Interface(bool root) {
 
     followingX = 0;
     followingY = 0;
+    isMouseIn = false;
 }
 
 Interface::~Interface() {
     
 }
+
+void Interface::VerifyMouseState(const int& x, const int& y) {
+    if (!isMouseIn) {
+        if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+            y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+            OnMouseIn();
+            isMouseIn = true;
+        }
+    }
+    else {
+        if (!(x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+            y > dstMask.y && y < (dstMask.y + dstMask.h))) {
+            OnMouseOut();
+            isMouseIn = false;
+        }
+    }
+}
+
+void Interface::OnMouseIn() {
+   
+}
+
+void Interface::OnMouseOut() {
+    
+}
+
 
 void Interface::AddMovableTag() {
     isMovable = true;
@@ -74,7 +101,7 @@ void Interface::SetHorizontalCenterPosition() {
 
 void Interface::SetPosition(const short int x, const short int y) {
     XYPair parent_position = { 0, 0 };
-    if (parent != nullptr) {
+    if (this->parent != nullptr) {
         parent_position = this->parent->GetPosition();
     }
     dstMask.x = x + parent_position.x;
@@ -112,9 +139,12 @@ void Interface::SetParent(Interface* parent) {
 }
 
 void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y) {
-    if (b.button == SDL_BUTTON_LEFT)
-        OnLeftClick(x, y);
-    else OnRightClick(x, y);
+    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+        if (b.button == SDL_BUTTON_LEFT)
+            OnLeftClick(x, y);
+        else OnRightClick(x, y);
+    }
 }
 
 void Interface::OnLeftClick(const int& x, const int& y) {
@@ -126,11 +156,11 @@ void Interface::OnRightClick(const int& x, const int& y) {
 }
 
 void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
-    if(currentKey == SDLK_a)
-        cout << "Am apasat a: " << currentKey << endl;
+    //if(currentKey == SDLK_a)
+        //cout << "Am apasat a: " << currentKey << endl;
 }
 
 void Interface::OnKeyRelease(unsigned int currentKey) {
-    if (currentKey == SDLK_a)
-        cout << "Am ridicat a: " << currentKey << endl;
+    //if (currentKey == SDLK_a)
+       // cout << "Am ridicat a: " << currentKey << endl;
 }

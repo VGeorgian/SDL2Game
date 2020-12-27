@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stack>
+#include <chrono>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -15,12 +16,14 @@ Game::Game() {
 
     MyInterface = nullptr;
     menuScreen = nullptr;
-    board = nullptr;
-    board2 = nullptr;
+    titleImage = nullptr;
 
-    boardText = nullptr;
-    boardText2 = nullptr;
     textFPS = nullptr;
+
+    startButton = nullptr;
+    startButton2 = nullptr;
+    startButton3 = nullptr;
+    startButton4 = nullptr;
 }
 
 bool Game::Init() {
@@ -28,7 +31,7 @@ bool Game::Init() {
         CHECK_ERROR(false, "SDL-ul nu s-a putut initializa", SDL_GetError(), __LINE__, __FILE__);
     }
 
-    Interface::Window = SDL_CreateWindow("SDL Tutorial",
+    Interface::Window = SDL_CreateWindow("Retro Hub",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH,
@@ -54,60 +57,47 @@ bool Game::Init() {
     MyInterface = new Interface(true);
 
     menuScreen = new Image;
-    CHECK(menuScreen->LoadImage("assets/img/menu_background.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
+    CHECK(menuScreen->LoadImage("assets/img/background_menu.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
     menuScreen->SetPosition(0, 0);
     menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     menuScreen->Show();
+
+    titleImage = new Image;
+    CHECK(titleImage->LoadImage("assets/img/menu-title.png"), "titleImage->LoadImage()", __LINE__, __FILE__);
+    titleImage->SetParent(menuScreen);
+    titleImage->SetPosition(40, 50);
+    titleImage->SetSize(358, 98);
+    titleImage->Show();
+
+    startButton = new MenuButton("START");
+    startButton->SetParent(menuScreen);
+    startButton->SetPosition(60, 250);
+    startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
+    startButton->Show();
+
+    startButton2 = new MenuButton("SETARI");
+    startButton2->SetParent(menuScreen);
+    startButton2->SetPosition(60, 295);
+    startButton2->Show();
+
+    startButton3 = new MenuButton("CUM SE JOACA?");
+    startButton3->SetParent(menuScreen);
+    startButton3->SetPosition(60, 340);
+    startButton3->Show();
+
+    startButton4 = new MenuButton("IESIRE");
+    startButton4->SetParent(menuScreen);
+    startButton4->SetPosition(60, 385);
+    startButton4->SetLeftClickEvent(bind(&Game::ExitEvent, this));
+    startButton4->Show();
+
 
     textFPS = new TextLine;
     textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
     textFPS->SetColor(255, 255, 255);
     textFPS->SetText("FPS: 0");
-    textFPS->SetPosition(10, 0);
+    textFPS->SetPosition(10, 5);
     textFPS->Show();
-
-    board2 = new Image;
-    CHECK(board2->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
-    board2->SetPosition(10, 50);
-    board2->SetSize(500, 500);
-    board2->SetFocus();
-    board2->AddMovableTag();
-    board2->Show();
-
-    board = new Image;
-    CHECK(board->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
-    board->SetPosition(300, 10);
-    board->SetSize(500, 500);
-    board->SetFocus();
-    board->AddMovableTag();
-    board->SetHorizontalCenterPosition();
-    board->Show();
-
-    board3 = new Image;
-    board3->SetParent(board);
-    CHECK(board3->LoadImage("assets/img/board.png"), "board->LoadImage()", __LINE__, __FILE__);
-    board3->SetPosition(200, 200);
-    board3->SetSize(500, 500);
-    board3->Show();
-
-    boardText2 = new TextLine;
-    boardText2->SetParent(board2);
-    boardText2->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
-    boardText2->SetColor(255, 255, 255);
-    boardText2->SetText("Board2");
-    boardText2->SetPosition(100, 200);
-    boardText2->SetHorizontalCenterPosition();
-    boardText2->Show();
-
-    boardText = new TextLine;
-    boardText->SetParent(board3);
-    boardText->SetFont("assets/font/NerkoOne-Regular.ttf", 40);
-    boardText->SetColor(255, 255, 255);
-    boardText->SetText("Board1");
-    boardText->SetPosition(0, 0);
-    boardText->SetHorizontalCenterPosition();
-    boardText->Show();
-
 
     return true;
 }
@@ -123,7 +113,18 @@ Game::~Game() {
     menuScreen = nullptr;
 }
 
+void Game::StartEvent() {
+    menuScreen->Hide();
+    //titleImage->Hide();
+    //startButton->Hide();
+    //startButton2->Hide();
+    //startButton3->Hide();
+    //startButton4->Hide();
+}
 
+void Game::ExitEvent() {
+    isRunning = false;
+}
 
 void Game::Run() {
     int x = 0;
@@ -146,13 +147,19 @@ void Game::Run() {
 
     auto interfaceBegin = MyInterface->uiElements.begin();
 
+    using namespace std::chrono;
+    milliseconds ms = duration_cast<milliseconds>(
+        system_clock::now().time_since_epoch()
+        );
+    cout << ms.count() << endl;
+   
     while (MyInterface->CheckIfRunning() && isRunning) {
         SDL_GetMouseState(&mouseX, &mouseY);
         while (SDL_PollEvent(&event)) {
             /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
             switch (event.type) {
             case SDL_KEYDOWN:
-                printf("Key press detected: %d\n", event.key.keysym.sym);
+                //printf("Key press detected: %d\n", event.key.keysym.sym);
                 if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = true;
                     for (auto it : MyInterface->uiElements) {
@@ -162,7 +169,7 @@ void Game::Run() {
                 break;
 
             case SDL_KEYUP:
-                printf("Key release detected: %d\n", event.key.keysym.sym);
+                //printf("Key release detected: %d\n", event.key.keysym.sym);
                 if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = false;
                     for (auto it : MyInterface->uiElements) {
@@ -172,7 +179,7 @@ void Game::Run() {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                printf("Mouse click detected\n");
+                //printf("Mouse click detected\n");
                 pos = -1;
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
@@ -207,7 +214,7 @@ void Game::Run() {
                 break;
 
             case SDL_MOUSEBUTTONUP:
-                printf("Mouse release detected\n");
+                //printf("Mouse release detected\n");
                 for (auto it : MyInterface->uiElements) {
                     it->SetCursorFollwing(false);
                 }
@@ -253,6 +260,7 @@ void Game::Run() {
                 it->CheckPressedKeys();
                 it->Update();
                 if (it->isShow() && b_canRender) {
+                    it->VerifyMouseState(mouseX, mouseY);
                     it->Render();
                 }
 
@@ -281,14 +289,15 @@ void Game::Run() {
                                 interfaceBegin[j]->UpdatePosition();
 
                                 //Daca nu are parinti, verific daca el este vizibil
-                                if(canRender.top() && interfaceBegin[j]->isShow() && b_canRender)
+                                if (canRender.top() && interfaceBegin[j]->isShow() && b_canRender) {
+                                    interfaceBegin[j]->VerifyMouseState(mouseX, mouseY);
                                     interfaceBegin[j]->Render();
+                                }
 
                                 checked[j] = true;
 
                                 if (interfaceBegin[j]->isParent()) {
                                     mystack.push(interfaceBegin[j]);
-                                    cout << "Am gasit parinte:\n";
                                     j = -1;
                                 }
 
