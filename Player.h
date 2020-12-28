@@ -1,6 +1,9 @@
 #pragma once
 #include "Image.h"
 
-class Player : public Interface {
-	
+class Player : public Image {
+public:
+	Player();
+	~Player();
+
 };

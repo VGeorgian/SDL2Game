@@ -11,12 +11,19 @@ TextLine::TextLine():Interface() {
 }
 
 TextLine::~TextLine() {
-	if(nullptr != font)
+	if (nullptr != font) {
 		TTF_CloseFont(font);
-	if(nullptr != texture)
+		font = nullptr;
+	}
+
+	if (nullptr != texture) {
 		SDL_DestroyTexture(texture);
-	if (nullptr != text)
+		texture = nullptr;
+	}
+	if (nullptr != text) {
 		delete[] text;
+		text = nullptr;
+	}
 }
 
 bool TextLine::SetFont(const char path[], const unsigned int size) {

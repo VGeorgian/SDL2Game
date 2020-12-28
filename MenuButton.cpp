@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Button.h"
+#include "MenuButton.h"
 
 MenuButton::MenuButton(const char* titlu) {
     blueText = new TextLine;

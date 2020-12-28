@@ -6,7 +6,6 @@
 #include <SDL_ttf.h>
 
 #include "Game.h"
-#include "Image.h"
 #include "config.h"
 
 using namespace std;
@@ -15,15 +14,12 @@ Game::Game() {
     isRunning = true;
 
     MyInterface = nullptr;
-    menuScreen = nullptr;
     titleImage = nullptr;
 
-    textFPS = nullptr;
+    gameMenu = nullptr;
+    gameMap = nullptr;
 
-    startButton = nullptr;
-    startButton2 = nullptr;
-    startButton3 = nullptr;
-    startButton4 = nullptr;
+    textFPS = nullptr;
 }
 
 bool Game::Init() {
@@ -50,47 +46,18 @@ bool Game::Init() {
     if (TTF_Init() == -1) {
         CHECK_ERROR(false, "Eroare la initializarea font-ului", TTF_GetError(), __LINE__, __FILE__);
     }
-    // TODO: Verificare init in main si apelare run
-    //return false;
-
 
     MyInterface = new Interface(true);
 
-    menuScreen = new Image;
-    CHECK(menuScreen->LoadImage("assets/img/background_menu.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
-    menuScreen->SetPosition(0, 0);
-    menuScreen->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    menuScreen->Show();
+    gameMenu = new Menu;
+    CHECK(gameMenu->Init(), "gameMenu->Init()", __LINE__, __FILE__);
+    gameMenu->startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
+    gameMenu->exitButton->SetLeftClickEvent(bind(&Game::ExitEvent, this));
+    //gameMenu->Show();
 
-    titleImage = new Image;
-    CHECK(titleImage->LoadImage("assets/img/menu-title.png"), "titleImage->LoadImage()", __LINE__, __FILE__);
-    titleImage->SetParent(menuScreen);
-    titleImage->SetPosition(40, 50);
-    titleImage->SetSize(358, 98);
-    titleImage->Show();
-
-    startButton = new MenuButton("START");
-    startButton->SetParent(menuScreen);
-    startButton->SetPosition(60, 250);
-    startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
-    startButton->Show();
-
-    startButton2 = new MenuButton("SETARI");
-    startButton2->SetParent(menuScreen);
-    startButton2->SetPosition(60, 295);
-    startButton2->Show();
-
-    startButton3 = new MenuButton("CUM SE JOACA?");
-    startButton3->SetParent(menuScreen);
-    startButton3->SetPosition(60, 340);
-    startButton3->Show();
-
-    startButton4 = new MenuButton("IESIRE");
-    startButton4->SetParent(menuScreen);
-    startButton4->SetPosition(60, 385);
-    startButton4->SetLeftClickEvent(bind(&Game::ExitEvent, this));
-    startButton4->Show();
-
+    gameMap = new Map;
+    CHECK(gameMap->Init(), "gameMap->Init()", __LINE__, __FILE__);
+    //gameMap->Hide();
 
     textFPS = new TextLine;
     textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
@@ -103,23 +70,25 @@ bool Game::Init() {
 }
 
 Game::~Game() {
+
+    if(nullptr != MyInterface)
+        delete MyInterface;
+
+    if (nullptr != gameMenu)
+       delete gameMenu;
+
+    if (nullptr != gameMap)
+        delete gameMap;
+
+
+    if (nullptr != textFPS)
+        delete textFPS;
+
     TTF_Quit();
-    // SDL_StopTextInput();
-
-    delete MyInterface;
-    MyInterface = nullptr;
-
-    delete menuScreen;
-    menuScreen = nullptr;
 }
 
 void Game::StartEvent() {
-    menuScreen->Hide();
-    //titleImage->Hide();
-    //startButton->Hide();
-    //startButton2->Hide();
-    //startButton3->Hide();
-    //startButton4->Hide();
+    gameMenu->Hide();
 }
 
 void Game::ExitEvent() {
@@ -156,14 +125,15 @@ void Game::Run() {
     while (MyInterface->CheckIfRunning() && isRunning) {
         SDL_GetMouseState(&mouseX, &mouseY);
         while (SDL_PollEvent(&event)) {
-            /* We are only worried about SDL_KEYDOWN and SDL_KEYUP events */
+
             switch (event.type) {
             case SDL_KEYDOWN:
                 //printf("Key press detected: %d\n", event.key.keysym.sym);
                 if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = true;
                     for (auto it : MyInterface->uiElements) {
-                        it->OnKeyPress(KEYS, event.key.keysym.sym);
+                        if(it->isShow())
+                            it->OnKeyPress(KEYS, event.key.keysym.sym);
                     }
                 }
                 break;
@@ -173,7 +143,8 @@ void Game::Run() {
                 if (event.key.keysym.sym < KEYS_NUMBER) {
                     KEYS[event.key.keysym.sym] = false;
                     for (auto it : MyInterface->uiElements) {
-                        it->OnKeyRelease(event.key.keysym.sym);
+                        if (it->isShow())
+                            it->OnKeyRelease(event.key.keysym.sym);
                     }
                 }
                 break;
@@ -184,7 +155,8 @@ void Game::Run() {
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
                     ++i;
-                    it->OnMouseClick(event.button, mouseX, mouseY);
+                    if (it->isShow())
+                        it->OnMouseClick(event.button, mouseX, mouseY);
                     //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
                         if (it->IsFocusable())
@@ -300,14 +272,6 @@ void Game::Run() {
                                     mystack.push(interfaceBegin[j]);
                                     j = -1;
                                 }
-
-                                //Daca s-a ajuns la ultimul element si stiva mai 
-                                //are elemente, elimin ultimul element
-                                /*else if (j == MyInterface->uiElements.size() - 1) {
-                                    mystack.pop();
-                                    canRender.pop();
-                                    j = -1;
-                                }*/
                             }
                         }
                         if ((j == MyInterface->uiElements.size() - 1) && !mystack.empty()) {

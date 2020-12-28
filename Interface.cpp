@@ -99,6 +99,11 @@ void Interface::SetHorizontalCenterPosition() {
     dstMask.x = (width - dstMask.w) / 2;
 }
 
+void Interface::SetVerticalCenterPosition() {
+    int height = GetParent() ? GetParent()->GetSize().y : SCREEN_HEIGHT;
+    dstMask.y = (height - dstMask.h) / 2;
+}
+
 void Interface::SetPosition(const short int x, const short int y) {
     XYPair parent_position = { 0, 0 };
     if (this->parent != nullptr) {
@@ -163,4 +168,9 @@ void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
 void Interface::OnKeyRelease(unsigned int currentKey) {
     //if (currentKey == SDLK_a)
        // cout << "Am ridicat a: " << currentKey << endl;
+}
+
+
+SDL_Rect* Interface::GetDstRectPointer() {
+    return &dstMask;
 }

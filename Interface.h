@@ -32,8 +32,9 @@ public:
 	static vector <Interface*> uiElements;
 
 	Interface(bool root = false);
-	~Interface();
+	virtual ~Interface();
 
+	void SetVerticalCenterPosition();
 	void SetHorizontalCenterPosition();
 	void SetPosition(const short int x, const short int y);
 	XYPair GetPosition();
@@ -72,6 +73,9 @@ public:
 	virtual void OnMouseIn();
 	virtual void OnMouseOut();
 
-	void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	void OnKeyRelease(unsigned int currentKey);
+	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
+	virtual void OnKeyRelease(unsigned int currentKey);
+
+
+	SDL_Rect* GetDstRectPointer();
 };
