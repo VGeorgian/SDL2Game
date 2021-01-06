@@ -5,6 +5,7 @@
 #include "config.h"
 #include "Timer.h"
 #include "GameObject.h"
+#include "Snake.h"
 
 class Map : public Image {
 	Player* player;
@@ -14,13 +15,16 @@ class Map : public Image {
 	bool movingRight;
 	bool movingTop;
 	bool movingBottom;
+	Snake* snakeGame;
 public:
 	Map();
 	~Map();
 	bool Init();
 	void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	void OnKeyRelease(unsigned int currentKey);
+	void OnKeyRelease(bool KEYS[], unsigned int currentKey);
 	void Update();
 
 	bool CheckCollision(const int &x, const int &y);
+
+	void PlaySnake();
 };

@@ -1,5 +1,4 @@
 #pragma once
-#include <functional>
 #include "SDL.h"
 #include "config.h"
 #include "Interface.h"
@@ -13,7 +12,6 @@ protected:
     TextLine* text;
     TextLine* blueText;
     TextLine* redText;
-    std::function<void(void)> callback;
 public:
     MenuButton(const char* titlu);
     ~MenuButton();
@@ -23,7 +21,5 @@ public:
 
     void OnMouseIn();
     void OnMouseOut();
-    void OnLeftClick(const int& x, const int& y);
-    void SetLeftClickEvent(function<void(void)> callback_func);
 
 };

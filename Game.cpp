@@ -114,7 +114,7 @@ void Game::Run() {
 
     memset(KEYS, 0, sizeof(bool) * KEYS_NUMBER);
 
-    auto interfaceBegin = MyInterface->uiElements.begin();
+    //auto interfaceBegin = MyInterface->uiElements.begin();
 
     using namespace std::chrono;
     milliseconds ms = duration_cast<milliseconds>(
@@ -144,7 +144,7 @@ void Game::Run() {
                     KEYS[event.key.keysym.sym] = false;
                     for (auto it : MyInterface->uiElements) {
                         if (it->isShow())
-                            it->OnKeyRelease(event.key.keysym.sym);
+                            it->OnKeyRelease(KEYS, event.key.keysym.sym);
                     }
                 }
                 break;
@@ -155,7 +155,7 @@ void Game::Run() {
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
                     ++i;
-                    if (it->isShow())
+                    if (it->isRealShow()) // 
                         it->OnMouseClick(event.button, mouseX, mouseY);
                     //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
@@ -167,19 +167,19 @@ void Game::Run() {
                 }
 
                 if (pos != -1) {
-                    tmpInterface = interfaceBegin[pos];
+                    tmpInterface = MyInterface->uiElements.begin()[pos];
 
                     i = 1;
                     for (auto it : MyInterface->uiElements) {
-                        if (it->GetParent() == interfaceBegin[pos] && it->CheckFocus(mouseX, mouseY)) {
+                        if (it->GetParent() == MyInterface->uiElements.begin()[pos] && it->CheckFocus(mouseX, mouseY)) {
                             i = 0;
                             break;
                         }
                     }
 
                     if(i)
-                        interfaceBegin[pos]->SetCursorFollwing(true, mouseX, mouseY);
-                    MyInterface->uiElements.erase(interfaceBegin + pos);
+                        MyInterface->uiElements.begin()[pos]->SetCursorFollwing(true, mouseX, mouseY);
+                    MyInterface->uiElements.erase(MyInterface->uiElements.begin() + pos);
                     MyInterface->uiElements.push_back(tmpInterface);
                 }
 
@@ -224,57 +224,58 @@ void Game::Run() {
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
-
-        for (auto it : MyInterface->uiElements) {
+        int interfaceSize = MyInterface->uiElements.size();
+        
+        for (int it = 0; it < interfaceSize; ++it) {
             
-            if (it->GetParent() == nullptr) {
-                it->UpdateFollowingPosition(mouseX, mouseY);
-                it->CheckPressedKeys();
-                it->Update();
-                if (it->isShow() && b_canRender) {
-                    it->VerifyMouseState(mouseX, mouseY);
-                    it->Render();
+            if (MyInterface->uiElements.begin()[it]->GetParent() == nullptr) {
+                MyInterface->uiElements.begin()[it]->UpdateFollowingPosition(mouseX, mouseY);
+                MyInterface->uiElements.begin()[it]->CheckPressedKeys();
+                MyInterface->uiElements.begin()[it]->Update();
+                if (MyInterface->uiElements.begin()[it]->isShow() && b_canRender) {
+                    MyInterface->uiElements.begin()[it]->VerifyMouseState(mouseX, mouseY);
+                    MyInterface->uiElements.begin()[it]->Render();
                 }
 
                 checked[i] = true;
 
                 //Verific daca e parinte si ii caut toti copiii
-                if (it->isParent()) {
-                    mystack.push(it);
-                    canRender.push(it->isShow());
+                if (MyInterface->uiElements.begin()[it]->isParent()) {
+                    mystack.push(MyInterface->uiElements.begin()[it]);
+                    canRender.push(MyInterface->uiElements.begin()[it]->isShow());
 
-                    for (int j = 0; j < MyInterface->uiElements.size(); ++j) {
+                    for (int j = 0; j < interfaceSize; ++j) {
                         if (!checked[j]) {
-                            if (!mystack.empty() && interfaceBegin[j]->GetParent() == mystack.top()) {
+                            if (!mystack.empty() && MyInterface->uiElements.begin()[j]->GetParent() == mystack.top()) {
 
                                 //Verific daca parintii lui sunt afisati
-                                if (interfaceBegin[j]->isParent()) {
+                                if (MyInterface->uiElements.begin()[j]->isParent()) {
                                     if (canRender.top())
-                                        canRender.push(interfaceBegin[j]->isShow());
+                                        canRender.push(MyInterface->uiElements.begin()[j]->isShow());
                                     else
                                         canRender.push(false);
                                 }
 
-                                interfaceBegin[j]->UpdateFollowingPosition(mouseX, mouseY);
-                                interfaceBegin[j]->CheckPressedKeys();
-                                interfaceBegin[j]->Update();
-                                interfaceBegin[j]->UpdatePosition();
+                                MyInterface->uiElements.begin()[j]->UpdateFollowingPosition(mouseX, mouseY);
+                                MyInterface->uiElements.begin()[j]->CheckPressedKeys();
+                                MyInterface->uiElements.begin()[j]->Update();
+                                MyInterface->uiElements.begin()[j]->UpdatePosition();
 
                                 //Daca nu are parinti, verific daca el este vizibil
-                                if (canRender.top() && interfaceBegin[j]->isShow() && b_canRender) {
-                                    interfaceBegin[j]->VerifyMouseState(mouseX, mouseY);
-                                    interfaceBegin[j]->Render();
+                                if (canRender.top() && MyInterface->uiElements.begin()[j]->isShow() && b_canRender) {
+                                    MyInterface->uiElements.begin()[j]->VerifyMouseState(mouseX, mouseY);
+                                    MyInterface->uiElements.begin()[j]->Render();
                                 }
 
                                 checked[j] = true;
 
-                                if (interfaceBegin[j]->isParent()) {
-                                    mystack.push(interfaceBegin[j]);
+                                if (MyInterface->uiElements.begin()[j]->isParent()) {
+                                    mystack.push(MyInterface->uiElements.begin()[j]);
                                     j = -1;
                                 }
                             }
                         }
-                        if ((j == MyInterface->uiElements.size() - 1) && !mystack.empty()) {
+                        if ((j == interfaceSize - 1) && !mystack.empty()) {
                             mystack.pop();
                             canRender.pop();
                             j = -1;

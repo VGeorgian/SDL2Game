@@ -21,6 +21,7 @@ Interface::Interface(bool root) {
     followingX = 0;
     followingY = 0;
     isMouseIn = false;
+    callback = nullptr;
 }
 
 Interface::~Interface() {
@@ -79,8 +80,8 @@ void Interface::UpdateFollowingPosition(const int& x, const int& y) {
 }
 
 bool Interface::CheckFocus(const int& x, const int& y) {
-    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+    if (x >= dstMask.x && x <= (dstMask.x + dstMask.w) &&
+        y >= dstMask.y && y <= (dstMask.y + dstMask.h)) {
         return true;
     }
     return false;
@@ -120,6 +121,12 @@ XYPair Interface::GetPosition() {
     return pos;
 }
 
+
+XYPair Interface::GetRelativePosition() {
+    XYPair pos = { x, y };
+    return pos;
+}
+
 void Interface::SetSize(const short int width, const short int height) {
     dstMask.w = width;
     dstMask.h = height;
@@ -153,7 +160,9 @@ void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y
 }
 
 void Interface::OnLeftClick(const int& x, const int& y) {
-    //cout << "Click stanga la " << x << " " << y << endl;
+    if (callback != nullptr) {
+        callback();
+    }
 }
 
 void Interface::OnRightClick(const int& x, const int& y) {
@@ -165,12 +174,27 @@ void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
         //cout << "Am apasat a: " << currentKey << endl;
 }
 
-void Interface::OnKeyRelease(unsigned int currentKey) {
+void Interface::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
     //if (currentKey == SDLK_a)
        // cout << "Am ridicat a: " << currentKey << endl;
+}
+
+void Interface::SetLeftClickEvent(function<void(void)> callback_func) {
+    callback = callback_func;
 }
 
 
 SDL_Rect* Interface::GetDstRectPointer() {
     return &dstMask;
+}
+
+bool Interface::isRealShow() {
+    Interface* tmp = this;
+    while (tmp) {
+        if (!tmp->isShow())
+            return false;
+        tmp = tmp->GetParent();
+    }
+
+    return true;
 }

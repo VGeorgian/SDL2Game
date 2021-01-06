@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "vector"
 #include "SDL.h"
 #include "config.h"
@@ -19,6 +20,7 @@ protected:
 	bool followCursor;
 	int followingX, followingY;
 	bool isMouseIn;
+	std::function<void(void)> callback;
 
 public:
 	static bool isRunning;
@@ -38,6 +40,7 @@ public:
 	void SetHorizontalCenterPosition();
 	void SetPosition(const short int x, const short int y);
 	XYPair GetPosition();
+	XYPair GetRelativePosition();
 
 	void SetSize(const short int width, const short int height);
 	XYPair GetSize();
@@ -53,12 +56,14 @@ public:
 	Interface* GetParent() { return parent; };
 	bool isParent() { return b_isParent; };
 	bool isShow() { return isVisible; };
+	bool isRealShow();
 	void Show() { isVisible = true; };
 	void Hide() { isVisible = false; }
 
 	void OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y);
 	virtual void OnLeftClick(const int& x, const int& y);
 	virtual void OnRightClick(const int& x, const int& y);
+	virtual void SetLeftClickEvent(function<void(void)> callback_func);
 
 	bool CheckFocus(const int& x, const int& y);
 	void SetFocus();
@@ -74,8 +79,9 @@ public:
 	virtual void OnMouseOut();
 
 	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	virtual void OnKeyRelease(unsigned int currentKey);
+	virtual void OnKeyRelease(bool KEYS[], unsigned int currentKey);
 
 
+	
 	SDL_Rect* GetDstRectPointer();
 };

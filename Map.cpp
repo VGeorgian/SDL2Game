@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "Map.h"
 
 using namespace std;
@@ -10,56 +11,13 @@ Map::Map() {
     movingRight = false;
     movingTop = false;
     movingBottom = false;
-
-    GameObject* tmpObject = new GameObject;
-    tmpObject->LoadImage("assets/img/object-red.png");
-    tmpObject->SetPosition(0, 0);
-    tmpObject->SetParent(this);
-    tmpObject->SetSize(400, 10);
-    tmpObject->Show();
-
-    collision.push_back(tmpObject);
-
-    tmpObject = new GameObject;
-    tmpObject->LoadImage("assets/img/object-red.png");
-    tmpObject->SetPosition(0, 0);
-    tmpObject->SetParent(this);
-    tmpObject->SetSize(10, 400);
-    tmpObject->Show();
-
-
-    collision.push_back(tmpObject);
-
-    tmpObject = new GameObject;
-    tmpObject->LoadImage("assets/img/object-red.png");
-    tmpObject->SetPosition(400, 0);
-    tmpObject->SetParent(this);
-    tmpObject->SetSize(10, 400);
-    tmpObject->Show();
-
-    collision.push_back(tmpObject);
-
-    tmpObject = new GameObject;
-    tmpObject->LoadImage("assets/img/object-red.png");
-    tmpObject->SetPosition(0, 400);
-    tmpObject->SetParent(this);
-    tmpObject->SetSize(130, 10);
-    tmpObject->Show();
-
-    collision.push_back(tmpObject);
-
-    tmpObject = new GameObject;
-    tmpObject->LoadImage("assets/img/object-red.png");
-    tmpObject->SetPosition(400-130, 400);
-    tmpObject->SetParent(this);
-    tmpObject->SetSize(130, 10);
-    tmpObject->Show();
-
-    collision.push_back(tmpObject);
+    
+    snakeGame = nullptr;
 }
 
 Map::~Map() {
-
+    if (nullptr != player)
+        delete player;
 }
 
 bool Map::CheckCollision(const int& x, const int& y) {
@@ -90,11 +48,50 @@ bool Map::Init() {
     this->SetSize(3840, 2160);
     this->Show();
 
+    int x, y, w, h;
+    char buffer[64];
+    GameObject* tmpObject;
+
+    ifstream IN("map.config", ifstream::in);
+
+    while (IN.good()) {
+        IN >> x >> y >> w >> h >> buffer;
+
+        tmpObject = new GameObject;
+        tmpObject->SetParent(this);
+        tmpObject->LoadImage(buffer);
+        tmpObject->SetPosition(x, y);
+        tmpObject->SetSize(w, h);
+        tmpObject->Show();
+
+        collision.push_back(tmpObject);
+    }
+
+    GameObject* snakeMachine = new GameObject;
+    snakeMachine->SetParent(this);
+    snakeMachine->LoadImage(buffer);
+    snakeMachine->SetPosition(500, 500);
+    snakeMachine->SetSize(150, 300);
+    snakeMachine->SetLeftClickEvent(bind(&Map::PlaySnake, this));
+    snakeMachine->Show();
+
+
+    collision.push_back(snakeMachine);
+
     player = new Player;
+    CHECK(player->Init(), "player->Init()", __LINE__, __FILE__);
     //player->SetParent(this);
     player->Show();
 
+    snakeGame = new Snake;
+    snakeGame->Init();
+    snakeGame->Hide();
+
     return true;
+}
+void Map::PlaySnake() {
+    cout << "Snake game start\n";
+    snakeGame->Show();
 }
 
 
@@ -111,7 +108,7 @@ void Map::OnKeyPress(bool KEYS[], unsigned int currentKey) {
         movingBottom = true;
 }
 
-void Map::OnKeyRelease(unsigned int currentKey) {
+void Map::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
     if (SDLK_a == currentKey)
         movingLeft = false;
     if (SDLK_d == currentKey)
@@ -135,7 +132,6 @@ void Map::Update() {
         if (movingBottom && !CheckCollision(0, -1))
             this->SetPosition(dstMask.x, dstMask.y - 1);
 
-        
-        movingTime.SetDelay(4);
+        movingTime.SetDelay(1);
     }
 }

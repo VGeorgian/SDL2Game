@@ -31,15 +31,10 @@ MenuButton::MenuButton(const char* titlu) {
     TTF_SizeText(text->GetFont(), titlu, &w, &h);
     this->SetSize(w, h);
 
-    callback = nullptr;
 }
 
 MenuButton::~MenuButton() {
 	delete text;
-}
-
-void MenuButton::SetLeftClickEvent(std::function<void(void)> callback_func) {
-    callback = callback_func;
 }
 
 void MenuButton::OnMouseIn() {
@@ -50,9 +45,4 @@ void MenuButton::OnMouseIn() {
 void MenuButton::OnMouseOut() {
     blueText->SetPosition(0, 0);
     redText->SetPosition(0, 0);
-}
-
-void MenuButton::OnLeftClick(const int& x, const int& y) {
-    if (nullptr != callback)
-        callback();
 }
