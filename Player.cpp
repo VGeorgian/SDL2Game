@@ -61,14 +61,14 @@ void Player::Render() {
 }
 
 void Player::OnKeyPress(bool KEYS[], unsigned int currentKey) {
-    if (KEYS[SDLK_w] || KEYS[SDLK_s]) {
+    if (KEYS[SDL_SCANCODE_W] || KEYS[SDL_SCANCODE_S]) {
         if (!moving) {
             moving = true;
             frameTimer.SetDelay(0);
         }
     }
 
-    if (KEYS[SDLK_a]) {
+    if (KEYS[SDL_SCANCODE_A]) {
         if (!moving) {
             moving = true;
             frameTimer.SetDelay(0);
@@ -77,7 +77,7 @@ void Player::OnKeyPress(bool KEYS[], unsigned int currentKey) {
         direction = false; // left
     }
 
-    if (KEYS[SDLK_d]) {
+    if (KEYS[SDL_SCANCODE_D]) {
         if (!moving) {
             moving = true;
             frameTimer.SetDelay(0);
@@ -89,7 +89,7 @@ void Player::OnKeyPress(bool KEYS[], unsigned int currentKey) {
 
 void Player::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
 
-    if (KEYS[SDLK_a] || KEYS[SDLK_d] || KEYS[SDLK_w] || KEYS[SDLK_s]) {
+    if (KEYS[SDL_SCANCODE_A] || KEYS[SDL_SCANCODE_D] || KEYS[SDL_SCANCODE_W] || KEYS[SDL_SCANCODE_S]) {
         moving = true;
     }
     else {
@@ -98,11 +98,11 @@ void Player::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
         currentFrame = 0;
     }
 
-    if (KEYS[SDLK_a]) {
+    if (KEYS[SDL_SCANCODE_A]) {
         direction = false; // left
     }
 
-    if (KEYS[SDLK_d]) {
+    if (KEYS[SDL_SCANCODE_D]) {
         direction = true; // right
     }
 }

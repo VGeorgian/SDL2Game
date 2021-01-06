@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stack>
 #include <chrono>
+#include <map>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -96,6 +97,7 @@ void Game::ExitEvent() {
 }
 
 void Game::Run() {
+    //std::map<int, bool>;
     int x = 0;
     int i, currentFPS = 0, mouseX, mouseY, pos;
     SDL_Event event;
@@ -103,7 +105,7 @@ void Game::Run() {
     stack <bool> canRender;
     bool checked[MAX_INTERFACE_ELEMENTS];
     bool b_canRender = true;
-    bool KEYS[KEYS_NUMBER];
+    bool KEYS[SDL_NUM_SCANCODES];
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
@@ -112,7 +114,7 @@ void Game::Run() {
     Interface* tmpInterface;
     char tmpBuffer[10];
 
-    memset(KEYS, 0, sizeof(bool) * KEYS_NUMBER);
+    memset(KEYS, 0, sizeof(bool) * SDL_NUM_SCANCODES);
 
     //auto interfaceBegin = MyInterface->uiElements.begin();
 
@@ -129,22 +131,22 @@ void Game::Run() {
             switch (event.type) {
             case SDL_KEYDOWN:
                 //printf("Key press detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.sym < KEYS_NUMBER) {
-                    KEYS[event.key.keysym.sym] = true;
+                if (event.key.keysym.scancode < SDL_NUM_SCANCODES) {
+                    KEYS[event.key.keysym.scancode] = true;
                     for (auto it : MyInterface->uiElements) {
                         if(it->isShow())
-                            it->OnKeyPress(KEYS, event.key.keysym.sym);
+                            it->OnKeyPress(KEYS, event.key.keysym.scancode);
                     }
                 }
                 break;
 
             case SDL_KEYUP:
                 //printf("Key release detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.sym < KEYS_NUMBER) {
-                    KEYS[event.key.keysym.sym] = false;
+                if (event.key.keysym.scancode < SDL_NUM_SCANCODES) {
+                    KEYS[event.key.keysym.scancode] = false;
                     for (auto it : MyInterface->uiElements) {
                         if (it->isShow())
-                            it->OnKeyRelease(KEYS, event.key.keysym.sym);
+                            it->OnKeyRelease(KEYS, event.key.keysym.scancode);
                     }
                 }
                 break;

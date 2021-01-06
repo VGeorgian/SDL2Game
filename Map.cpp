@@ -96,26 +96,25 @@ void Map::PlaySnake() {
 
 
 void Map::OnKeyPress(bool KEYS[], unsigned int currentKey) {
-    if (KEYS[SDLK_a]) {
+    if (KEYS[SDL_SCANCODE_A]) {
         movingLeft = true;
-        //cout << "Left";
     }
-    if (KEYS[SDLK_d])
+    if (KEYS[SDL_SCANCODE_D])
         movingRight = true;
-    if (KEYS[SDLK_w])
+    if (KEYS[SDL_SCANCODE_W])
         movingTop = true;
-    if (KEYS[SDLK_s])
+    if (KEYS[SDL_SCANCODE_S])
         movingBottom = true;
 }
 
 void Map::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
-    if (SDLK_a == currentKey)
+    if (SDL_SCANCODE_A == currentKey)
         movingLeft = false;
-    if (SDLK_d == currentKey)
+    if (SDL_SCANCODE_D == currentKey)
         movingRight = false;
-    if (SDLK_w == currentKey)
+    if (SDL_SCANCODE_W == currentKey)
         movingTop = false;
-    if (SDLK_s == currentKey)
+    if (SDL_SCANCODE_S == currentKey)
         movingBottom = false;
 }
 

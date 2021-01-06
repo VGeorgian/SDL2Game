@@ -12,13 +12,13 @@ class Snake : public Image {
 	Image* fruit;
 	char positionX, positionY;
 	vector <Image*> snake;
-	int contor;
+	bool sprint;
 public:
 	Snake();
 	~Snake() {};
 
 	void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	//void OnKeyRelease(bool KEYS[], unsigned int currentKey);
+	void OnKeyRelease(bool KEYS[], unsigned int currentKey);
 	void Update();
 
 	bool Init();

@@ -8,7 +8,7 @@ Snake::Snake() {
 	fruit = nullptr;
 	positionX = 13;
 	positionY = 8;
-	contor = 0;
+	sprint = false;
 }
 
 bool Snake::Init() {
@@ -61,21 +61,29 @@ bool Snake::Init() {
 }
 
 void Snake::OnKeyPress(bool KEYS[], unsigned int currentKey) {
-	if (KEYS[SDLK_a]) {
+	if (KEYS[SDL_SCANCODE_A]) {
 		direction = 0;
 		//cout << "Left";
 	}
-	if (KEYS[SDLK_w]) {
+	if (KEYS[SDL_SCANCODE_W]) {
 		direction = 1;
 		//cout << "Left";
 	}
-	if (KEYS[SDLK_d]) {
+	if (KEYS[SDL_SCANCODE_D]) {
 		direction = 2;
 		//cout << "Left";
 	}
-	if (KEYS[SDLK_s]) {
+	if (KEYS[SDL_SCANCODE_S]) {
 		direction = 3;
 		//cout << "Left";
+	}
+	if (currentKey == SDL_SCANCODE_LSHIFT) {
+		sprint = true;
+	}
+}
+void Snake::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
+	if (currentKey == SDLK_LSHIFT) {
+		sprint = false;
 	}
 }
 
@@ -87,24 +95,24 @@ void Snake::Update() {
 
 		switch (direction) {
 		case 0:
-			if (nextX == 1)
-				nextX = FIELD_WIDTH + 1;
-			--nextX;
+			if (positionX == 1)
+				positionX = FIELD_WIDTH + 1;
+			--positionX;
 			break;
 		case 1:
-			if (nextY == 1)
-				nextY = FIELD_HEIGHT + 1;
-			--nextY;
+			if (positionY == 1)
+				positionY = FIELD_HEIGHT + 1;
+			--positionY;
 			break;
 		case 2:
-			if (nextX == FIELD_WIDTH)
-				nextX = 0;
-			++nextX;
+			if (positionX == FIELD_WIDTH)
+				positionX = 0;
+			++positionX;
 			break;
 		case 3:
-			if (nextY == FIELD_HEIGHT)
-				nextY = 0;
-			++nextY;
+			if (positionY == FIELD_HEIGHT)
+				positionY = 0;
+			++positionY;
 			break;
 		default:
 			break;
@@ -114,21 +122,17 @@ void Snake::Update() {
 
 		// Verific daca urmatoarea pozitie este tot parte din sarpe
 		for (int i = 1; i < snake.size(); ++i) {
-			if (snakeHead[i]->GetRelativePosition().x == 30 * (nextX - 1) && snakeHead[i]->GetRelativePosition().y == 30 * (nextY - 1)) {
+			if (snakeHead[i]->GetRelativePosition().x == 30 * (positionX - 1) && snakeHead[i]->GetRelativePosition().y == 30 * (positionY - 1)) {
 				cout << "Sfarsitul jocului!\n";
 				break;
 			}
 		}
 
 		tmpPosition = fruit->GetRelativePosition();
-		if (tmpPosition.x == 30 * (nextX - 1) && tmpPosition.y == 30 * (nextY - 1)) {
+		if (tmpPosition.x == 30 * (positionX - 1) && tmpPosition.y == 30 * (positionY - 1)) {
 			eatFruit = true;
 			cout << "Manca fruct\n";
 		}
-
-
-		positionX = nextX;
-		positionY = nextY;
 
 
 		tmpPosition = snakeHead[0]->GetRelativePosition();
@@ -151,13 +155,14 @@ void Snake::Update() {
 			tmpSnake->Show();
 
 			snake.push_back(tmpSnake);
-			//snake.push_back(tmpSnake);
 
 		}
 
 
-
-		timerMoving.SetDelay(500);
+		if(sprint)
+			timerMoving.SetDelay(200);
+		else
+			timerMoving.SetDelay(500);
 	}
 }
 
