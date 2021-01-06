@@ -151,6 +151,7 @@ void Snake::Update() {
 			tmpSnake->Show();
 
 			snake.push_back(tmpSnake);
+			//snake.push_back(tmpSnake);
 
 		}
 
