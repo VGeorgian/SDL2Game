@@ -118,13 +118,19 @@ void Game::Run() {
 
     //auto interfaceBegin = MyInterface->uiElements.begin();
 
-    using namespace std::chrono;
-    milliseconds ms = duration_cast<milliseconds>(
-        system_clock::now().time_since_epoch()
-        );
-    cout << ms.count() << endl;
+    
    
     while (MyInterface->CheckIfRunning() && isRunning) {
+        //Check self-destroy event
+        for (i = 0; i < MyInterface->uiElements.size(); ++i) {
+            if (MyInterface->uiElements.begin()[i]->IsSelfDestroy()) {
+                delete MyInterface->uiElements.begin()[i];
+                MyInterface->uiElements.erase(MyInterface->uiElements.begin() + i);
+                --i;
+            }
+        }
+
+
         SDL_GetMouseState(&mouseX, &mouseY);
         while (SDL_PollEvent(&event)) {
 

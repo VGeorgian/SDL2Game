@@ -22,10 +22,30 @@ Interface::Interface(bool root) {
     followingY = 0;
     isMouseIn = false;
     callback = nullptr;
+    selfDestroy = false;
 }
 
 Interface::~Interface() {
     
+}
+
+void Interface::EnableSelfDestroy() {
+    selfDestroy = true;
+}
+
+bool Interface::IsSelfDestroy() {
+    return selfDestroy;
+}
+
+void Interface::BringToFront() {
+    //tmpInterface = MyInterface->uiElements.begin()[pos];
+    for (int i = 0; i < uiElements.size(); ++i) {
+        if (uiElements.begin()[i] == this) {
+            uiElements.erase(uiElements.begin() + i);
+            uiElements.push_back(this);
+            break;
+        }
+    }
 }
 
 void Interface::VerifyMouseState(const int& x, const int& y) {

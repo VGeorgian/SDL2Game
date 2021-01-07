@@ -21,6 +21,7 @@ protected:
 	int followingX, followingY;
 	bool isMouseIn;
 	std::function<void(void)> callback;
+	bool selfDestroy;
 
 public:
 	static bool isRunning;
@@ -68,6 +69,7 @@ public:
 	bool CheckFocus(const int& x, const int& y);
 	void SetFocus();
 	bool IsFocusable() { return b_isFocusable; };
+	void BringToFront();
 
 	void AddMovableTag();
 	bool IsMovable();
@@ -81,7 +83,8 @@ public:
 	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	virtual void OnKeyRelease(bool KEYS[], unsigned int currentKey);
 
-
+	void EnableSelfDestroy();
+	bool IsSelfDestroy();
 	
 	SDL_Rect* GetDstRectPointer();
 };
