@@ -52,13 +52,21 @@ bool Snake::Init() {
 	gameOverScreen->SetSize(750, 450);
 	//gameOverScreen->Show();
 
-	TextLine* gameOverText = new TextLine;
+	gameOverText = new TextLine;
 	gameOverText->SetParent(gameOverScreen);
 	gameOverText->SetFont("assets/font/Bangers-Regular.ttf", 100);
 	gameOverText->SetColor(255, 255, 255);
 	gameOverText->SetText("GAME OVER");
 	gameOverText->SetPosition(185, 50);
 	gameOverText->Show();
+
+	scoreText = new TextLine;
+	scoreText->SetParent(this);
+	scoreText->SetFont("assets/font/Bangers-Regular.ttf", 30);
+	scoreText->SetColor(255, 255, 255);
+	scoreText->SetText("SCOR: 0");
+	scoreText->SetPosition(30, 90);
+	scoreText->Show();
 
 	restartButton = new MenuButton("Restart");
 	restartButton->SetParent(gameOverScreen);
@@ -95,6 +103,9 @@ bool Snake::Init() {
 
 	isStarted = false;
 	startScreen->BringToFront();
+
+	srand(time(NULL));
+
 	return true;
 }
 
@@ -112,7 +123,21 @@ void Snake::StartGame() {
 	GenerateFruit();
 	positionX = 13;
 	positionY = 8;
-	//TODO: Add autodestroy variable 
+	//TODO: Add autodestroy variable
+
+	/*
+	Image* tmpImg;
+	for (int i = 0; i < 100; ++i){
+		tmpImg = new Image;
+		tmpImg->LoadImage("assets/img/snake.png");
+		tmpImg->SetParent(field);
+		tmpImg->SetPosition(0, 0);
+		tmpImg->SetSize(30, 30);
+		tmpImg->Show();
+
+		snake.push_back(tmpImg);
+	}
+	*/
 }
 
 void Snake::OpenGame() {
@@ -127,7 +152,30 @@ void Snake::CloseGame() {
 }
 
 void Snake::GenerateFruit(){
-	return;
+	//Genereaza o noua pozitie a fructului, intr-un slot unde nu se gaseste sarpele
+	int i, tmp, tmpArray[FIELD_WIDTH * FIELD_HEIGHT];
+	//cout << "Elementul: " << (positionY - 1) * 25 + positionX << endl;
+	memset(fruitField, 0, sizeof(bool) * FIELD_WIDTH * FIELD_HEIGHT);
+
+	auto snakeHead = snake.begin();
+
+	for (i = 0; i < snake.size(); ++i) {
+		tmp = snakeHead[i]->GetRelativePosition().y / 30 * 25 + snakeHead[i]->GetRelativePosition().x / 30;
+		fruitField[tmp] = true;
+	}
+
+	tmp = 0;
+
+	for (i = 0; i < FIELD_WIDTH * FIELD_HEIGHT; i++) {
+		if (!fruitField[i])
+			tmpArray[tmp++] = i;
+	}
+
+	i = rand() % tmp;
+	//cout << "Linia: " << tmpArray[i] / FIELD_WIDTH << "  coloana: " << tmpArray[i] % FIELD_WIDTH << endl;
+
+	fruit->SetPosition(tmpArray[i] % FIELD_WIDTH * 30, tmpArray[i] / FIELD_WIDTH * 30);
+	fruit->BringToFront();
 }
 
 void Snake::OnKeyPress(bool KEYS[], unsigned int currentKey) {
@@ -163,6 +211,7 @@ void Snake::Update() {
 			char nextX = positionX, nextY = positionY;
 			struct XYPair tmpPosition;
 			bool eatFruit = false;
+			auto snakeHead = snake.begin();
 
 			switch (direction) {
 			case 0:
@@ -189,7 +238,6 @@ void Snake::Update() {
 				break;
 			}
 
-			auto snakeHead = snake.begin();
 
 			// Verific daca urmatoarea pozitie este tot parte din sarpe
 			for (int i = 1; i < snake.size(); ++i) {
@@ -206,7 +254,6 @@ void Snake::Update() {
 			tmpPosition = fruit->GetRelativePosition();
 			if (tmpPosition.x == 30 * (positionX - 1) && tmpPosition.y == 30 * (positionY - 1)) {
 				eatFruit = true;
-				//cout << "Manca fruct\n";
 			}
 
 
@@ -231,8 +278,12 @@ void Snake::Update() {
 
 				snake.push_back(tmpSnake);
 
-			}
+				GenerateFruit();
 
+				char tmpBuffer[16];
+				snprintf(tmpBuffer, 16, "SCOR: %d", snake.size());
+				scoreText->SetText(tmpBuffer);
+			}
 
 			if(sprint)
 				timerMoving.SetDelay(200);

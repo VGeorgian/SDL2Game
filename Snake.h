@@ -8,7 +8,7 @@
 
 class Snake : public Image {
 	char direction; // 0 = left | 1 = top | 2 = right | 3 = bottom
-	Timer timerMoving;
+	Timer timerMoving; // timpul la care sarpele avanseaza un block
 	Image* field;
 	Image* fruit;
 	Image* gameOverScreen;
@@ -16,10 +16,14 @@ class Snake : public Image {
 	Image* closeButton;
 	MenuButton* restartButton;
 	MenuButton* startButton;
-	char positionX, positionY;
-	vector <Image*> snake;
-	bool sprint;
+	TextLine* gameOverText;
+	TextLine* scoreText;
+	char positionX, positionY; // coordonatele capului sarpelui pe harta
+	vector <Image*> snake; // blocurile sarpelui
+	bool sprint; // verifica daca sarpele trebuie sa isi mareasca viteza
 	bool isStarted;
+	bool fruitField[FIELD_WIDTH * FIELD_HEIGHT];
+	//vector <int> snake;
 public:
 	Snake();
 	~Snake() {};
