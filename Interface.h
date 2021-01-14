@@ -21,7 +21,7 @@ protected:
 	int followingX, followingY;
 	bool isMouseIn;
 	std::function<void(void)> callback;
-	bool selfDestroy;
+	bool selfDestroy; // Distrugere automata dupa randare
 
 public:
 	static bool isRunning;
@@ -79,6 +79,7 @@ public:
 	void VerifyMouseState(const int& x = 0, const int& y = 0);
 	virtual void OnMouseIn();
 	virtual void OnMouseOut();
+	bool IsOnMouseRange(const int& x = 0, const int& y = 0);
 
 	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	virtual void OnKeyRelease(bool KEYS[], unsigned int currentKey);

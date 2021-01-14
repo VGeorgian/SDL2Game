@@ -1,10 +1,8 @@
 #pragma once
 
-#define MAX_FPS 144
-#define FPS_LIMIT 1
-#define MAX_INTERFACE_ELEMENTS 124
-
-#define KEYS_NUMBER 1024
+#define MAX_FPS 60
+#define FPS_LIMIT_ENABLED 1
+#define MAX_INTERFACE_ELEMENTS 256
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720

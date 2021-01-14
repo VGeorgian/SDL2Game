@@ -91,7 +91,7 @@ bool Map::Init() {
 }
 void Map::PlaySnake() {
     cout << "Snake game start\n";
-    snakeGame->Show();
+    snakeGame->OpenGame();
 }
 
 

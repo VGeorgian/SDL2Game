@@ -1,9 +1,9 @@
 #include <iostream>
 #include "MenuButton.h"
 
-MenuButton::MenuButton(const char* titlu) {
+MenuButton::MenuButton(const char* titlu, int fontSize) {
     blueText = new TextLine;
-    blueText->SetFont("assets/font/Bangers-Regular.ttf", 40);
+    blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     blueText->SetParent(this);
     blueText->SetColor(0, 0, 255);
     blueText->SetText(titlu);
@@ -11,7 +11,7 @@ MenuButton::MenuButton(const char* titlu) {
     blueText->Show();
 
     redText = new TextLine;
-    redText->SetFont("assets/font/Bangers-Regular.ttf", 40);
+    redText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     redText->SetParent(this);
     redText->SetColor(255, 0, 0);
     redText->SetText(titlu);
@@ -20,7 +20,7 @@ MenuButton::MenuButton(const char* titlu) {
 
 
 	text = new TextLine;
-    text->SetFont("assets/font/Bangers-Regular.ttf", 40);
+    text->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     text->SetParent(this);
     text->SetColor(255, 255, 255);
     text->SetText(titlu);
@@ -45,4 +45,10 @@ void MenuButton::OnMouseIn() {
 void MenuButton::OnMouseOut() {
     blueText->SetPosition(0, 0);
     redText->SetPosition(0, 0);
+}
+
+void MenuButton::SetLeftClickEvent(function<void(void)> callback_func) {
+    if (nullptr != text) {
+        text->SetLeftClickEvent(callback_func);
+    }
 }

@@ -65,6 +65,14 @@ void Interface::VerifyMouseState(const int& x, const int& y) {
     }
 }
 
+bool Interface::IsOnMouseRange(const int& x, const int& y) {
+    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
+        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+        return true;
+    }
+    return false;
+}
+
 void Interface::OnMouseIn() {
    
 }
@@ -166,8 +174,10 @@ void Interface::UpdatePosition() {
 }
 
 void Interface::SetParent(Interface* parent) {
-    this->parent = parent;
-    this->parent->b_isParent = true;
+    if (nullptr != parent) {
+        this->parent = parent;
+        this->parent->b_isParent = true;
+    }
 }
 
 void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y) {

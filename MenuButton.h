@@ -13,12 +13,12 @@ protected:
     TextLine* blueText;
     TextLine* redText;
 public:
-    MenuButton(const char* titlu);
+    MenuButton(const char* titlu, int fontSize = 40);
     ~MenuButton();
 
     //bool LoadImage(const char path[]);
     //void Render();
-
+    void SetLeftClickEvent(function<void(void)> callback_func);
     void OnMouseIn();
     void OnMouseOut();
 

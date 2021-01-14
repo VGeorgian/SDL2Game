@@ -90,6 +90,7 @@ Game::~Game() {
 
 void Game::StartEvent() {
     gameMenu->Hide();
+    gameMap->Show();
 }
 
 void Game::ExitEvent() {
@@ -116,7 +117,7 @@ void Game::Run() {
 
     memset(KEYS, 0, sizeof(bool) * SDL_NUM_SCANCODES);
 
-    //auto interfaceBegin = MyInterface->uiElements.begin();
+    auto interfaceBegin = MyInterface->uiElements.begin();
 
     
    
@@ -133,7 +134,6 @@ void Game::Run() {
 
         SDL_GetMouseState(&mouseX, &mouseY);
         while (SDL_PollEvent(&event)) {
-
             switch (event.type) {
             case SDL_KEYDOWN:
                 //printf("Key press detected: %d\n", event.key.keysym.sym);
@@ -163,8 +163,13 @@ void Game::Run() {
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
                     ++i;
-                    if (it->isRealShow()) // 
+
+                    /*
+                    if (it->isRealShow())  {
                         it->OnMouseClick(event.button, mouseX, mouseY);
+                    }
+                    */
+
                     //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
                         if (it->IsFocusable())
@@ -173,6 +178,52 @@ void Game::Run() {
                             pos = -1;
                     }
                 }
+
+                memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
+
+                interfaceBegin = MyInterface->uiElements.begin();
+                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) {
+                    if (interfaceBegin[j]->isRealShow() && interfaceBegin[j]->IsOnMouseRange(mouseX, mouseY)) {
+                        if (interfaceBegin[j]->isParent() && !checked[j]) {
+                            mystack.push(interfaceBegin[j]);
+                            checked[j] = true;
+                            for (int k = MyInterface->uiElements.size() - 1; k >= 0 && !mystack.empty(); --k) {
+                                if (interfaceBegin[k]->GetParent() == mystack.top() && interfaceBegin[k]->isRealShow() && interfaceBegin[k]->IsOnMouseRange(mouseX, mouseY)){
+                                    if (interfaceBegin[k]->isParent() && !checked[k]) {
+                                        mystack.push(interfaceBegin[k]);
+                                        checked[k] = true;
+                                        k = MyInterface->uiElements.size();
+                                        continue;
+                                    }
+                                    else {
+                                        interfaceBegin[k]->OnMouseClick(event.button, mouseX, mouseY);
+                                        cout << "Trimite mouse click 1\n";
+                                        j = 0;
+                                        break;
+                                    }
+                                    
+                                }
+                                cout << "j = " << j << "   k = " << k << endl;
+                                if (k == 0 && !mystack.empty()) {
+                                    mystack.pop();
+                                    k = MyInterface->uiElements.size();
+                                }
+                            }
+                            if (j != 0) {
+                                MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
+                                j = 0;
+                            }
+                        }
+                        else {
+                            MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
+                            cout << "Trimite mouse click 2\n";
+                            break;
+                        }
+                    }
+                }
+
+                while (!mystack.empty())
+                    mystack.pop();
 
                 if (pos != -1) {
                     tmpInterface = MyInterface->uiElements.begin()[pos];
@@ -209,7 +260,7 @@ void Game::Run() {
             }
         }
 
-        if (FPS_LIMIT){
+        if (FPS_LIMIT_ENABLED) {
             currentRenderTime = SDL_GetTicks();
             if (currentRenderTime > lastRenderTime + renderInterval) {
                 ++currentFPS;
