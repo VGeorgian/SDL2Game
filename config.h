@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_FPS 60
+#define MAX_FPS 144
 #define FPS_LIMIT_ENABLED 1
 #define MAX_INTERFACE_ELEMENTS 256
 

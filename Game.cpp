@@ -179,6 +179,9 @@ void Game::Run() {
                     }
                 }
 
+                /*
+                * Prima functie de click
+                * 
                 memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
                 interfaceBegin = MyInterface->uiElements.begin();
@@ -224,6 +227,21 @@ void Game::Run() {
 
                 while (!mystack.empty())
                     mystack.pop();
+                */
+
+                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) {
+                    if (interfaceBegin[j]->isRealShow() && interfaceBegin[j]->IsOnMouseRange(mouseX, mouseY)) {
+                        if (interfaceBegin[j]->isParent()) {
+                            interfaceBegin[j]->CheckLeftClick(event.button, mouseX, mouseY);
+                            break;
+
+                        }
+                        else {
+                            interfaceBegin[j]->OnMouseClick(event.button, mouseX, mouseY);
+                            break;
+                        }
+                    }
+                }
 
                 if (pos != -1) {
                     tmpInterface = MyInterface->uiElements.begin()[pos];

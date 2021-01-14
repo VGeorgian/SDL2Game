@@ -2,6 +2,8 @@
 #include "MenuButton.h"
 
 MenuButton::MenuButton(const char* titlu, int fontSize) {
+
+
     blueText = new TextLine;
     blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     blueText->SetParent(this);
@@ -19,7 +21,7 @@ MenuButton::MenuButton(const char* titlu, int fontSize) {
     redText->Show();
 
 
-	text = new TextLine;
+    text = new TextLine;
     text->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     text->SetParent(this);
     text->SetColor(255, 255, 255);
@@ -49,6 +51,7 @@ void MenuButton::OnMouseOut() {
 
 void MenuButton::SetLeftClickEvent(function<void(void)> callback_func) {
     if (nullptr != text) {
-        text->SetLeftClickEvent(callback_func);
+        blueText->SetLeftClickEvent(callback_func);
     }
+
 }

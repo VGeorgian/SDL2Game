@@ -177,7 +177,33 @@ void Interface::SetParent(Interface* parent) {
     if (nullptr != parent) {
         this->parent = parent;
         this->parent->b_isParent = true;
+        this->parent->AddChild(this);
     }
+}
+
+void Interface::AddChild(Interface* child) {
+    childs.push_back(child);
+}
+
+bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY) {
+    for (auto it : childs ) {
+        if (it->IsOnMouseRange(mouseX, mouseY) && it->isRealShow()) {
+            if (it->isParent()) {
+                if (!it->CheckLeftClick(b, mouseX, mouseY)) {
+                    it->OnMouseClick(b, mouseX, mouseY);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                it->OnMouseClick(b, mouseX, mouseY);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y) {

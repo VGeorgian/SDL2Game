@@ -33,6 +33,7 @@ public:
 	static SDL_Renderer* renderer;
 
 	static vector <Interface*> uiElements;
+	vector <Interface*> childs;
 
 	Interface(bool root = false);
 	virtual ~Interface();
@@ -53,6 +54,7 @@ public:
 	bool CheckIfRunning();
 	
 	void SetParent(Interface* parent);
+	void AddChild(Interface* child);
 
 	Interface* GetParent() { return parent; };
 	bool isParent() { return b_isParent; };
@@ -80,6 +82,7 @@ public:
 	virtual void OnMouseIn();
 	virtual void OnMouseOut();
 	bool IsOnMouseRange(const int& x = 0, const int& y = 0);
+	bool CheckLeftClick(SDL_MouseButtonEvent& b, int& mouseX, int& mouseY); // functie recursiva care cauta toti copiii si verifica daca sunt in raza de randare;
 
 	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
 	virtual void OnKeyRelease(bool KEYS[], unsigned int currentKey);
