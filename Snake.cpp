@@ -75,7 +75,6 @@ bool Snake::Init() {
 	restartButton->SetLeftClickEvent(bind(&Snake::StartGame, this));
 	restartButton->Show();
 
-
 	Image* tmpImg = new Image;
 	tmpImg->LoadImage("assets/img/snake.png");
 	tmpImg->SetParent(field);
@@ -104,7 +103,7 @@ bool Snake::Init() {
 	isStarted = false;
 	startScreen->BringToFront();
 
-	srand(time(NULL));
+
 
 	return true;
 }

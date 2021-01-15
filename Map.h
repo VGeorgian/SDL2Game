@@ -27,4 +27,5 @@ public:
 	bool CheckCollision(const int &x, const int &y);
 
 	void PlaySnake();
+	void ShowMap();
 };

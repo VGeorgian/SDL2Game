@@ -81,7 +81,6 @@ bool Map::Init() {
     player = new Player;
     CHECK(player->Init(), "player->Init()", __LINE__, __FILE__);
     //player->SetParent(this);
-    player->Show();
 
     snakeGame = new Snake;
     snakeGame->Init();
@@ -92,6 +91,11 @@ bool Map::Init() {
 void Map::PlaySnake() {
     cout << "Snake game start\n";
     snakeGame->OpenGame();
+}
+
+void Map::ShowMap() {
+    player->Show();
+    this->Show();
 }
 
 

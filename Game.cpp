@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "Game.h"
 #include "config.h"
@@ -24,7 +25,7 @@ Game::Game() {
 }
 
 bool Game::Init() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         CHECK_ERROR(false, "SDL-ul nu s-a putut initializa", SDL_GetError(), __LINE__, __FILE__);
     }
 
@@ -48,17 +49,32 @@ bool Game::Init() {
         CHECK_ERROR(false, "Eroare la initializarea font-ului", TTF_GetError(), __LINE__, __FILE__);
     }
 
+    /*
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+        return false;
+    }
+
+    Mix_Music* bgMusic = NULL;
+    bgMusic = Mix_LoadMUS("assets/sound/background.mp3");
+    Mix_PlayMusic(bgMusic, 0);*/
+
     MyInterface = new Interface(true);
 
     gameMenu = new Menu;
     CHECK(gameMenu->Init(), "gameMenu->Init()", __LINE__, __FILE__);
     gameMenu->startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
     gameMenu->exitButton->SetLeftClickEvent(bind(&Game::ExitEvent, this));
-    //gameMenu->Show();
+    gameMenu->Show();
 
     gameMap = new Map;
     CHECK(gameMap->Init(), "gameMap->Init()", __LINE__, __FILE__);
-    //gameMap->Hide();
+    gameMap->Hide();
+
+    gameSettings = new Settings;
+    CHECK(gameSettings->Init(), "gameMap->Init()", __LINE__, __FILE__);
+    gameSettings->Hide();
 
     textFPS = new TextLine;
     textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
@@ -66,6 +82,8 @@ bool Game::Init() {
     textFPS->SetText("FPS: 0");
     textFPS->SetPosition(10, 5);
     textFPS->Show();
+
+    srand(time(NULL));
 
     return true;
 }
@@ -90,7 +108,7 @@ Game::~Game() {
 
 void Game::StartEvent() {
     gameMenu->Hide();
-    gameMap->Show();
+    gameMap->ShowMap();
 }
 
 void Game::ExitEvent() {
@@ -158,19 +176,10 @@ void Game::Run() {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                //printf("Mouse click detected\n");
                 pos = -1;
                 i = -1;
                 for (auto it : MyInterface->uiElements) {
                     ++i;
-
-                    /*
-                    if (it->isRealShow())  {
-                        it->OnMouseClick(event.button, mouseX, mouseY);
-                    }
-                    */
-
-                    //it->FollowCursor(event.button, mouseX, mouseY);
                     if (it->CheckFocus(mouseX, mouseY)) {
                         if (it->IsFocusable())
                             pos = i;
@@ -180,68 +189,24 @@ void Game::Run() {
                 }
 
                 /*
-                * Prima functie de click
-                * 
-                memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
-
-                interfaceBegin = MyInterface->uiElements.begin();
+                * Verific toate elementele interfetei si apelez evenimentul
+                * de click pe elementul cel mai din fata
+                */
                 for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) {
-                    if (interfaceBegin[j]->isRealShow() && interfaceBegin[j]->IsOnMouseRange(mouseX, mouseY)) {
-                        if (interfaceBegin[j]->isParent() && !checked[j]) {
-                            mystack.push(interfaceBegin[j]);
-                            checked[j] = true;
-                            for (int k = MyInterface->uiElements.size() - 1; k >= 0 && !mystack.empty(); --k) {
-                                if (interfaceBegin[k]->GetParent() == mystack.top() && interfaceBegin[k]->isRealShow() && interfaceBegin[k]->IsOnMouseRange(mouseX, mouseY)){
-                                    if (interfaceBegin[k]->isParent() && !checked[k]) {
-                                        mystack.push(interfaceBegin[k]);
-                                        checked[k] = true;
-                                        k = MyInterface->uiElements.size();
-                                        continue;
-                                    }
-                                    else {
-                                        interfaceBegin[k]->OnMouseClick(event.button, mouseX, mouseY);
-                                        cout << "Trimite mouse click 1\n";
-                                        j = 0;
-                                        break;
-                                    }
-                                    
-                                }
-                                cout << "j = " << j << "   k = " << k << endl;
-                                if (k == 0 && !mystack.empty()) {
-                                    mystack.pop();
-                                    k = MyInterface->uiElements.size();
-                                }
-                            }
-                            if (j != 0) {
-                                MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
-                                j = 0;
-                            }
+                    if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange(mouseX, mouseY)) {
+                        if (MyInterface->uiElements.begin()[j]->isParent()) {
+                            MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button, mouseX, mouseY);
+                            break;
+
                         }
                         else {
                             MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
-                            cout << "Trimite mouse click 2\n";
                             break;
                         }
                     }
                 }
 
-                while (!mystack.empty())
-                    mystack.pop();
-                */
 
-                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) {
-                    if (interfaceBegin[j]->isRealShow() && interfaceBegin[j]->IsOnMouseRange(mouseX, mouseY)) {
-                        if (interfaceBegin[j]->isParent()) {
-                            interfaceBegin[j]->CheckLeftClick(event.button, mouseX, mouseY);
-                            break;
-
-                        }
-                        else {
-                            interfaceBegin[j]->OnMouseClick(event.button, mouseX, mouseY);
-                            break;
-                        }
-                    }
-                }
 
                 if (pos != -1) {
                     tmpInterface = MyInterface->uiElements.begin()[pos];
@@ -365,7 +330,5 @@ void Game::Run() {
 
         if (b_canRender)
             SDL_RenderPresent(Interface::renderer);
-
-        //SDL_Delay(1000);
 	}
 }

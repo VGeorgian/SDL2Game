@@ -186,7 +186,9 @@ void Interface::AddChild(Interface* child) {
 }
 
 bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY) {
-    for (auto it : childs ) {
+    Interface* it = nullptr;
+    for (int j = childs.size() - 1; j >= 0; --j) {
+        it = childs.begin()[j];
         if (it->IsOnMouseRange(mouseX, mouseY) && it->isRealShow()) {
             if (it->isParent()) {
                 if (!it->CheckLeftClick(b, mouseX, mouseY)) {

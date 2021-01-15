@@ -5,6 +5,7 @@
 #include "TextLine.h"
 #include "Menu.h"
 #include "Map.h"
+#include "Settings.h"
 //#include "SettingsManager.h"
 
 class Game {
@@ -17,6 +18,8 @@ private:
 
 	Menu* gameMenu;
 	Map* gameMap;
+	Settings* gameSettings;
+
 public:
 	Game();
 	~Game();

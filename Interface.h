@@ -22,6 +22,7 @@ protected:
 	bool isMouseIn;
 	std::function<void(void)> callback;
 	bool selfDestroy; // Distrugere automata dupa randare
+	vector <Interface*> childs;
 
 public:
 	static bool isRunning;
@@ -33,7 +34,6 @@ public:
 	static SDL_Renderer* renderer;
 
 	static vector <Interface*> uiElements;
-	vector <Interface*> childs;
 
 	Interface(bool root = false);
 	virtual ~Interface();

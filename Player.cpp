@@ -22,7 +22,6 @@ bool Player::Init() {
     this->SetSize(100, 100);
     this->SetVerticalCenterPosition();
     this->SetHorizontalCenterPosition();
-    this->Show();
 
     return true;
 }
