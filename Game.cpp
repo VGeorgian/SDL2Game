@@ -176,53 +176,26 @@ void Game::Run() {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                pos = -1;
-                i = -1;
-                for (auto it : MyInterface->uiElements) {
-                    ++i;
-                    if (it->CheckFocus(mouseX, mouseY)) {
-                        if (it->IsFocusable())
-                            pos = i;
-                        else
-                            pos = -1;
-                    }
-                }
-
                 /*
                 * Verific toate elementele interfetei si apelez evenimentul
                 * de click pe elementul cel mai din fata
                 */
-                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) {
+                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
                     if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange(mouseX, mouseY)) {
                         if (MyInterface->uiElements.begin()[j]->isParent()) {
                             MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button, mouseX, mouseY);
+                            MyInterface->uiElements.begin()[j]->SetCursorFollwing(true, mouseX, mouseY);
                             break;
 
                         }
                         else {
                             MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
+                            if (!MyInterface->uiElements.begin()[j]->GetParent()) { // Daca nu are parinti, testez daca se poate misca
+                                MyInterface->uiElements.begin()[j]->SetCursorFollwing(true, mouseX, mouseY);
+                            }
                             break;
                         }
                     }
-                }
-
-
-
-                if (pos != -1) {
-                    tmpInterface = MyInterface->uiElements.begin()[pos];
-
-                    i = 1;
-                    for (auto it : MyInterface->uiElements) {
-                        if (it->GetParent() == MyInterface->uiElements.begin()[pos] && it->CheckFocus(mouseX, mouseY)) {
-                            i = 0;
-                            break;
-                        }
-                    }
-
-                    if(i)
-                        MyInterface->uiElements.begin()[pos]->SetCursorFollwing(true, mouseX, mouseY);
-                    MyInterface->uiElements.erase(MyInterface->uiElements.begin() + pos);
-                    MyInterface->uiElements.push_back(tmpInterface);
                 }
 
                 break;
