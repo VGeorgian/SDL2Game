@@ -26,7 +26,9 @@ Interface::Interface(bool root) {
 }
 
 Interface::~Interface() {
-    
+    if (GetParent() != nullptr) {
+        GetParent()->RemoveChild(this);
+    }
 }
 
 void Interface::EnableSelfDestroy() {
@@ -183,6 +185,16 @@ void Interface::SetParent(Interface* parent) {
 
 void Interface::AddChild(Interface* child) {
     childs.push_back(child);
+}
+
+void Interface::RemoveChild(Interface* child) {
+    for (int i = 0; i < childs.size(); ++i) {
+        if (childs.begin()[i] == child) {
+            childs.erase(childs.begin() + i);
+            break;
+        }
+
+    }
 }
 
 bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY) {

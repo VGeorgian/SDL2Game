@@ -55,6 +55,7 @@ public:
 	
 	void SetParent(Interface* parent);
 	void AddChild(Interface* child);
+	void RemoveChild(Interface* child);
 
 	Interface* GetParent() { return parent; };
 	bool isParent() { return b_isParent; };
