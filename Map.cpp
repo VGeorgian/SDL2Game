@@ -99,7 +99,7 @@ void Map::ShowMap() {
 }
 
 
-void Map::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
+void Map::OnKeyPress(bool KEYS[], int currentKey) {
     if (KEYS[SDL_SCANCODE_A]) {
         movingLeft = true;
     }
@@ -111,7 +111,7 @@ void Map::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
         movingBottom = true;
 }
 
-void Map::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
+void Map::OnKeyRelease(bool KEYS[], int currentKey) {
     if (SDL_SCANCODE_A == currentKey)
         movingLeft = false;
     if (SDL_SCANCODE_D == currentKey)

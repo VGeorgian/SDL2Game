@@ -12,6 +12,13 @@ Snake::Snake() {
 	positionY = 8;
 	sprint = false;
 	isStarted = false;
+
+	closeButton = nullptr;
+	memset(fruitField, false, sizeof(bool) * FIELD_WIDTH * FIELD_HEIGHT);
+	gameOverText = nullptr;
+	restartButton = nullptr;
+	scoreText = nullptr;
+	startButton = nullptr;
 }
 
 bool Snake::Init() {
@@ -155,6 +162,7 @@ void Snake::GenerateFruit(){
 	int i, tmp, tmpArray[FIELD_WIDTH * FIELD_HEIGHT];
 	//cout << "Elementul: " << (positionY - 1) * 25 + positionX << endl;
 	memset(fruitField, 0, sizeof(bool) * FIELD_WIDTH * FIELD_HEIGHT);
+	memset(tmpArray, 0, sizeof(bool) * FIELD_WIDTH * FIELD_HEIGHT);
 
 	auto snakeHead = snake.begin();
 
@@ -177,7 +185,7 @@ void Snake::GenerateFruit(){
 	fruit->BringToFront();
 }
 
-void Snake::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
+void Snake::OnKeyPress(bool KEYS[], int currentKey) {
 	if (KEYS[SDL_SCANCODE_A]) {
 		direction = 0;
 		//cout << "Left";
@@ -198,7 +206,7 @@ void Snake::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
 		sprint = true;
 	}
 }
-void Snake::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
+void Snake::OnKeyRelease(bool KEYS[], int currentKey) {
 	if (currentKey == SDL_SCANCODE_LSHIFT) {
 		sprint = false;
 	}
@@ -279,8 +287,8 @@ void Snake::Update() {
 
 				GenerateFruit();
 
-				char tmpBuffer[16];
-				snprintf(tmpBuffer, 16, "SCOR: %d", snake.size());
+				char tmpBuffer[64];
+				snprintf(tmpBuffer, 64, "SCOR: %zd", snake.size());
 				scoreText->SetText(tmpBuffer);
 			}
 

@@ -7,5 +7,4 @@ public:
 	RangeInput();
 	~RangeInput();
 	bool Init();
-
 };

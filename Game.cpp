@@ -20,6 +20,7 @@ Game::Game() {
 
     gameMenu = nullptr;
     gameMap = nullptr;
+    gameSettings = nullptr;
 
     textFPS = nullptr;
 }
@@ -64,8 +65,10 @@ bool Game::Init() {
 
     gameMenu = new Menu;
     CHECK(gameMenu->Init(), "gameMenu->Init()", __LINE__, __FILE__);
-    gameMenu->startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
-    gameMenu->exitButton->SetLeftClickEvent(bind(&Game::ExitEvent, this));
+    gameMenu->SetStartButtonEvent(bind(&Game::StartEvent, this));
+    gameMenu->SetSettingsButtonEvent(bind(&Game::SettingsEvent, this));
+    gameMenu->SetHelpButtonEvent(bind(&Game::ExitEvent, this));
+    gameMenu->SetExitButtonEvent(bind(&Game::ExitEvent, this));
     gameMenu->Show();
 
     gameMap = new Map;
@@ -74,6 +77,7 @@ bool Game::Init() {
 
     gameSettings = new Settings;
     CHECK(gameSettings->Init(), "gameMap->Init()", __LINE__, __FILE__);
+    gameSettings->SetBackButtonEvent(bind(&Game::BackToMenuEvent, this));
     gameSettings->Hide();
 
     textFPS = new TextLine;
@@ -83,7 +87,7 @@ bool Game::Init() {
     textFPS->SetPosition(10, 5);
     textFPS->Show();
 
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
 
     return true;
 }
@@ -111,14 +115,26 @@ void Game::StartEvent() {
     gameMap->ShowMap();
 }
 
+
+void Game::SettingsEvent() {
+    gameMenu->Hide();
+    gameSettings->Show();
+}
+
 void Game::ExitEvent() {
     isRunning = false;
+}
+
+void Game::BackToMenuEvent() {
+    gameMenu->Show();
+    gameMap->Hide();
+    gameSettings->Hide();
 }
 
 void Game::Run() {
     //std::map<int, bool>;
     int x = 0;
-    int i, currentFPS = 0, mouseX, mouseY, pos;
+    int i, currentFPS = 0;
     SDL_Event event;
     stack <Interface*> mystack;
     stack <bool> canRender;
@@ -129,8 +145,6 @@ void Game::Run() {
                  currentRenderTime,
                  renderInterval = 1000 / MAX_FPS,
                  tmpTime = SDL_GetTicks(); //Update text fps la fiecare secunda
-
-    Interface* tmpInterface;
     char tmpBuffer[10];
 
     memset(KEYS, 0, sizeof(bool) * SDL_NUM_SCANCODES);
@@ -147,14 +161,12 @@ void Game::Run() {
             }
         }
 
-
-        SDL_GetMouseState(&mouseX, &mouseY);
         SDL_GetMouseState(&Interface::mouseX, &Interface::mouseY);
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
             case SDL_KEYDOWN:
                 //printf("Key press detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.scancode < SDL_NUM_SCANCODES) {
+                if (event.key.keysym.scancode < SDL_NUM_SCANCODES && event.key.keysym.scancode >= 0) {
                     KEYS[event.key.keysym.scancode] = true;
                     for (auto it : MyInterface->uiElements) {
                         if(it->isShow())
@@ -165,7 +177,7 @@ void Game::Run() {
 
             case SDL_KEYUP:
                 //printf("Key release detected: %d\n", event.key.keysym.sym);
-                if (event.key.keysym.scancode < SDL_NUM_SCANCODES) {
+                if (event.key.keysym.scancode < SDL_NUM_SCANCODES && event.key.keysym.scancode >= 0) {
                     KEYS[event.key.keysym.scancode] = false;
                     for (auto it : MyInterface->uiElements) {
                         if (it->isShow())
@@ -179,12 +191,13 @@ void Game::Run() {
                 * Verific toate elementele interfetei si apelez evenimentul
                 * de click pe elementul cel mai din fata
                 */
-                for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
+                for (int64_t j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
                     if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange()) {
                         if (MyInterface->uiElements.begin()[j]->isParent()) {
                             MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button);
                             MyInterface->uiElements.begin()[j]->SetCursorFollwing(true);
-                            MyInterface->uiElements.begin()[j]->BringToFront();
+                            if(MyInterface->uiElements.begin()[j]->IsMovable())
+                                MyInterface->uiElements.begin()[j]->BringToFront();
                             break;
 
                         }
@@ -192,7 +205,8 @@ void Game::Run() {
                             MyInterface->uiElements.begin()[j]->OnMouseClick(event.button);
                             if (!MyInterface->uiElements.begin()[j]->GetParent()) { // Daca nu are parinti, testez daca se poate misca
                                 MyInterface->uiElements.begin()[j]->SetCursorFollwing(true);
-                                MyInterface->uiElements.begin()[j]->BringToFront();
+                                if (MyInterface->uiElements.begin()[j]->IsMovable())
+                                    MyInterface->uiElements.begin()[j]->BringToFront();
                             }
                             break;
                         }
@@ -240,7 +254,7 @@ void Game::Run() {
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
 
         i = 0;
-        int interfaceSize = MyInterface->uiElements.size();
+        int64_t interfaceSize = MyInterface->uiElements.size();
         
         for (int it = 0; it < interfaceSize; ++it) {
             

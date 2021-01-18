@@ -6,8 +6,10 @@ using namespace std;
 Settings::Settings() {
 	title = nullptr;
 	backButton = nullptr;
+	saveButton = nullptr;
 	screenSizeLabel = nullptr;
 	musicStatusLabel = nullptr;
+	volumeLabel = nullptr;
 }
 
 Settings::~Settings() {
@@ -37,19 +39,15 @@ bool Settings :: Init() {
 	title->SetPosition(30, 60);
 	title->Show();
 
-	backButton = new MenuButton("SALVEAZÃ SETARI", 60);
-	backButton->SetPosition(30, SCREEN_HEIGHT - 100);
-	backButton->SetParent(this);
-	//backButton->SetHorizontalCenterPosition();
-	//backButton->SetLeftClickEvent(bind(&Snake::StartGame, this));
-	backButton->Show();
-
-	saveButton = new MenuButton("Inapoi la meniu", 25);
-	saveButton->SetPosition(SCREEN_WIDTH - 170, 20);
+	saveButton = new MenuButton("SALVEAZÃ SETARI", 60);
+	saveButton->SetPosition(30, SCREEN_HEIGHT - 100);
 	saveButton->SetParent(this);
-	//saveButton->SetHorizontalCenterPosition();
-	//saveButton->SetLeftClickEvent(bind(&Snake::StartGame, this));
 	saveButton->Show();
+
+	backButton = new MenuButton("Inapoi la meniu", 25);
+	backButton->SetPosition(SCREEN_WIDTH - 170, 20);
+	backButton->SetParent(this);
+	backButton->Show();
 
 	screenSizeLabel = new TextLine();
 	screenSizeLabel->SetParent(this);
@@ -78,4 +76,8 @@ bool Settings :: Init() {
 
 
 	return true;
+}
+
+void Settings::SetBackButtonEvent(function<void(void)> callback_func) {
+	backButton->SetLeftClickEvent(callback_func);
 }

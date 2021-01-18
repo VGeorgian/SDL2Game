@@ -28,4 +28,6 @@ public:
 
 	void StartEvent();
 	void ExitEvent();
+	void SettingsEvent();
+	void BackToMenuEvent();
 };

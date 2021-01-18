@@ -28,8 +28,8 @@ public:
 	Snake();
 	~Snake() {};
 
-	void OnKeyPress(bool KEYS[], SDL_Scancode &currentKey);
-	void OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey);
+	void OnKeyPress(bool KEYS[], int currentKey);
+	void OnKeyRelease(bool KEYS[], int currentKey);
 	void Update();
 
 	bool Init();

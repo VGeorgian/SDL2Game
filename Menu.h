@@ -6,12 +6,16 @@
 class Menu : public Image {
 	Image* titleImage;
 
-public:
 	MenuButton* startButton;
-	MenuButton* optionButton;
+	MenuButton* settingsButton;
 	MenuButton* helpButton;
 	MenuButton* exitButton;
 
+public:
+	void SetStartButtonEvent(function<void(void)> callback_func);
+	void SetSettingsButtonEvent(function<void(void)> callback_func);
+	void SetHelpButtonEvent(function<void(void)> callback_func);
+	void SetExitButtonEvent(function<void(void)> callback_func);
 	Menu();
 	~Menu();
 	bool Init();

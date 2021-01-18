@@ -15,4 +15,5 @@ public:
 	~Settings();
 	bool Init();
 	void ShowSettings();
+	void SetBackButtonEvent(function<void(void)> callback_func);
 };

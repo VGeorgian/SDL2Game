@@ -87,8 +87,8 @@ public:
 	bool IsOnMouseRange();
 	bool CheckLeftClick(SDL_MouseButtonEvent& b); // functie recursiva care cauta toti copiii si verifica daca sunt in raza de randare;
 
-	virtual void OnKeyPress(bool KEYS[], SDL_Scancode &currentKey);
-	virtual void OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey);
+	virtual void OnKeyPress(bool KEYS[], int currentKey);
+	virtual void OnKeyRelease(bool KEYS[], int currentKey);
 
 	void EnableSelfDestroy();
 	bool IsSelfDestroy();

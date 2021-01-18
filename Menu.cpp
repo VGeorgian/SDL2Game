@@ -3,7 +3,7 @@
 Menu::Menu() {
     titleImage = nullptr;
 	startButton = nullptr;
-	optionButton = nullptr;
+    settingsButton = nullptr;
 	helpButton = nullptr;
 	exitButton = nullptr;
 }
@@ -15,8 +15,8 @@ Menu::~Menu() {
 	if (nullptr != startButton)
 		delete startButton;
 
-	if (nullptr != optionButton)
-		delete optionButton;
+	if (nullptr != settingsButton)
+		delete settingsButton;
 
 	if (nullptr != helpButton)
 		delete helpButton;
@@ -44,10 +44,10 @@ bool Menu::Init() {
     //startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
     startButton->Show();
 
-    optionButton = new MenuButton("SETARI");
-    optionButton->SetParent(this);
-    optionButton->SetPosition(60, 295);
-    optionButton->Show();
+    settingsButton = new MenuButton("SETARI");
+    settingsButton->SetParent(this);
+    settingsButton->SetPosition(60, 295);
+    settingsButton->Show();
 
     helpButton = new MenuButton("CUM SE JOACA?");
     helpButton->SetParent(this);
@@ -61,4 +61,17 @@ bool Menu::Init() {
     exitButton->Show();
 
 	return true;
+}
+
+void Menu::SetStartButtonEvent(function<void(void)> callback_func) {
+    startButton->SetLeftClickEvent(callback_func);
+}
+void Menu::SetSettingsButtonEvent(function<void(void)> callback_func) {
+    settingsButton->SetLeftClickEvent(callback_func);
+}
+void Menu::SetHelpButtonEvent(function<void(void)> callback_func) {
+    helpButton->SetLeftClickEvent(callback_func);
+}
+void Menu::SetExitButtonEvent(function<void(void)> callback_func) {
+    exitButton->SetLeftClickEvent(callback_func);
 }

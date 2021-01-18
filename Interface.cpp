@@ -199,7 +199,7 @@ void Interface::RemoveChild(Interface* child) {
 
 bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b) {
     Interface* it = nullptr;
-    for (int j = childs.size() - 1; j >= 0; --j) {
+    for (int64_t j = childs.size() - 1; j >= 0; --j) {
         it = childs.begin()[j];
         if (it->IsOnMouseRange() && it->isRealShow()) {
             if (it->isParent()) {
@@ -239,12 +239,12 @@ void Interface::OnRightClick() {
     //cout << "Click dreapta la " << x << " " << y << endl;
 }
 
-void Interface::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
+void Interface::OnKeyPress(bool KEYS[], int currentKey) {
     //if(currentKey == SDLK_a)
         //cout << "Am apasat a: " << currentKey << endl;
 }
 
-void Interface::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
+void Interface::OnKeyRelease(bool KEYS[], int currentKey) {
     //if (currentKey == SDLK_a)
        // cout << "Am ridicat a: " << currentKey << endl;
 }

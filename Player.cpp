@@ -59,7 +59,7 @@ void Player::Render() {
 
 }
 
-void Player::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
+void Player::OnKeyPress(bool KEYS[], int currentKey) {
     if (KEYS[SDL_SCANCODE_W] || KEYS[SDL_SCANCODE_S]) {
         if (!moving) {
             moving = true;
@@ -86,7 +86,7 @@ void Player::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
     }
 }
 
-void Player::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
+void Player::OnKeyRelease(bool KEYS[], int currentKey) {
 
     if (KEYS[SDL_SCANCODE_A] || KEYS[SDL_SCANCODE_D] || KEYS[SDL_SCANCODE_W] || KEYS[SDL_SCANCODE_S]) {
         moving = true;
