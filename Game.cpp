@@ -136,8 +136,6 @@ void Game::Run() {
     memset(KEYS, 0, sizeof(bool) * SDL_NUM_SCANCODES);
 
     auto interfaceBegin = MyInterface->uiElements.begin();
-
-    
    
     while (MyInterface->CheckIfRunning() && isRunning) {
         //Check self-destroy event
@@ -151,6 +149,7 @@ void Game::Run() {
 
 
         SDL_GetMouseState(&mouseX, &mouseY);
+        SDL_GetMouseState(&Interface::mouseX, &Interface::mouseY);
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
             case SDL_KEYDOWN:
@@ -181,17 +180,19 @@ void Game::Run() {
                 * de click pe elementul cel mai din fata
                 */
                 for (int j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
-                    if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange(mouseX, mouseY)) {
+                    if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange()) {
                         if (MyInterface->uiElements.begin()[j]->isParent()) {
-                            MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button, mouseX, mouseY);
-                            MyInterface->uiElements.begin()[j]->SetCursorFollwing(true, mouseX, mouseY);
+                            MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button);
+                            MyInterface->uiElements.begin()[j]->SetCursorFollwing(true);
+                            MyInterface->uiElements.begin()[j]->BringToFront();
                             break;
 
                         }
                         else {
-                            MyInterface->uiElements.begin()[j]->OnMouseClick(event.button, mouseX, mouseY);
+                            MyInterface->uiElements.begin()[j]->OnMouseClick(event.button);
                             if (!MyInterface->uiElements.begin()[j]->GetParent()) { // Daca nu are parinti, testez daca se poate misca
-                                MyInterface->uiElements.begin()[j]->SetCursorFollwing(true, mouseX, mouseY);
+                                MyInterface->uiElements.begin()[j]->SetCursorFollwing(true);
+                                MyInterface->uiElements.begin()[j]->BringToFront();
                             }
                             break;
                         }
@@ -244,11 +245,11 @@ void Game::Run() {
         for (int it = 0; it < interfaceSize; ++it) {
             
             if (MyInterface->uiElements.begin()[it]->GetParent() == nullptr) {
-                MyInterface->uiElements.begin()[it]->UpdateFollowingPosition(mouseX, mouseY);
+                MyInterface->uiElements.begin()[it]->UpdateFollowingPosition();
                 MyInterface->uiElements.begin()[it]->CheckPressedKeys();
                 MyInterface->uiElements.begin()[it]->Update();
                 if (MyInterface->uiElements.begin()[it]->isShow() && b_canRender) {
-                    MyInterface->uiElements.begin()[it]->VerifyMouseState(mouseX, mouseY);
+                    MyInterface->uiElements.begin()[it]->VerifyMouseState();
                     MyInterface->uiElements.begin()[it]->Render();
                 }
 
@@ -271,14 +272,14 @@ void Game::Run() {
                                         canRender.push(false);
                                 }
 
-                                MyInterface->uiElements.begin()[j]->UpdateFollowingPosition(mouseX, mouseY);
+                                MyInterface->uiElements.begin()[j]->UpdateFollowingPosition();
                                 MyInterface->uiElements.begin()[j]->CheckPressedKeys();
                                 MyInterface->uiElements.begin()[j]->Update();
                                 MyInterface->uiElements.begin()[j]->UpdatePosition();
 
                                 //Daca nu are parinti, verific daca el este vizibil
                                 if (canRender.top() && MyInterface->uiElements.begin()[j]->isShow() && b_canRender) {
-                                    MyInterface->uiElements.begin()[j]->VerifyMouseState(mouseX, mouseY);
+                                    MyInterface->uiElements.begin()[j]->VerifyMouseState();
                                     MyInterface->uiElements.begin()[j]->Render();
                                 }
 

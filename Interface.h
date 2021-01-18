@@ -35,16 +35,18 @@ public:
 
 	static vector <Interface*> uiElements;
 
+	static int mouseX, mouseY;
+
 	Interface(bool root = false);
 	virtual ~Interface();
 
 	void SetVerticalCenterPosition();
 	void SetHorizontalCenterPosition();
-	void SetPosition(const short int x, const short int y);
+	void SetPosition(const short int &x, const short int &y);
 	XYPair GetPosition();
 	XYPair GetRelativePosition();
 
-	void SetSize(const short int width, const short int height);
+	void SetSize(const short int &width, const short int &height);
 	XYPair GetSize();
 
 	void UpdatePosition();
@@ -64,9 +66,9 @@ public:
 	void Show() { isVisible = true; };
 	void Hide() { isVisible = false; }
 
-	void OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y);
-	virtual void OnLeftClick(const int& x, const int& y);
-	virtual void OnRightClick(const int& x, const int& y);
+	void OnMouseClick(SDL_MouseButtonEvent& b);
+	virtual void OnLeftClick();
+	virtual void OnRightClick();
 	virtual void SetLeftClickEvent(function<void(void)> callback_func);
 
 	bool CheckFocus(const int& x, const int& y);
@@ -76,17 +78,17 @@ public:
 
 	void AddMovableTag();
 	bool IsMovable();
-	void SetCursorFollwing(const bool state, const int& x = 0, const int& y = 0);
-	void UpdateFollowingPosition(const int& x, const int& y);
+	void SetCursorFollwing(const bool state);
+	void UpdateFollowingPosition();
 
-	void VerifyMouseState(const int& x = 0, const int& y = 0);
+	void VerifyMouseState();
 	virtual void OnMouseIn();
 	virtual void OnMouseOut();
-	bool IsOnMouseRange(const int& x = 0, const int& y = 0);
-	bool CheckLeftClick(SDL_MouseButtonEvent& b, int& mouseX, int& mouseY); // functie recursiva care cauta toti copiii si verifica daca sunt in raza de randare;
+	bool IsOnMouseRange();
+	bool CheckLeftClick(SDL_MouseButtonEvent& b); // functie recursiva care cauta toti copiii si verifica daca sunt in raza de randare;
 
-	virtual void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	virtual void OnKeyRelease(bool KEYS[], unsigned int currentKey);
+	virtual void OnKeyPress(bool KEYS[], SDL_Scancode &currentKey);
+	virtual void OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey);
 
 	void EnableSelfDestroy();
 	bool IsSelfDestroy();

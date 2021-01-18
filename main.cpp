@@ -6,6 +6,9 @@
 #include "Game.h"
 
 //Init all game components
+bool Interface::isRunning = true;
+
+int Interface::mouseX = 0, Interface::mouseY = 0;
 
 SDL_Window* Interface::Window = nullptr;
 
@@ -13,7 +16,6 @@ SDL_Surface* Interface::ScreenSurface = nullptr;
 
 SDL_Renderer* Interface::renderer = nullptr;
 
-bool Interface::isRunning = true;
 
 vector <Interface*> Interface::uiElements;
 

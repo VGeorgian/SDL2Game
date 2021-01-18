@@ -50,26 +50,26 @@ void Interface::BringToFront() {
     }
 }
 
-void Interface::VerifyMouseState(const int& x, const int& y) {
+void Interface::VerifyMouseState() {
     if (!isMouseIn) {
-        if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-            y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+        if (mouseX > dstMask.x && mouseX < (dstMask.x + dstMask.w) &&
+            mouseY > dstMask.y && mouseY < (dstMask.y + dstMask.h)) {
             OnMouseIn();
             isMouseIn = true;
         }
     }
     else {
-        if (!(x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-            y > dstMask.y && y < (dstMask.y + dstMask.h))) {
+        if (!(mouseX > dstMask.x && mouseX < (dstMask.x + dstMask.w) &&
+            mouseY > dstMask.y && mouseY < (dstMask.y + dstMask.h))) {
             OnMouseOut();
             isMouseIn = false;
         }
     }
 }
 
-bool Interface::IsOnMouseRange(const int& x, const int& y) {
-    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+bool Interface::IsOnMouseRange() {
+    if (mouseX > dstMask.x && mouseX < (dstMask.x + dstMask.w) &&
+        mouseY > dstMask.y && mouseY < (dstMask.y + dstMask.h)) {
         return true;
     }
     return false;
@@ -92,21 +92,21 @@ bool Interface::IsMovable() {
     return isMovable;
 }
 
-void Interface::SetCursorFollwing(const bool state, const int& x, const int& y){
+void Interface::SetCursorFollwing(const bool state){
     if (!isMovable)
         return;
 
     followCursor = state;
-    followingX = x - dstMask.x;
-    followingY = y - dstMask.y;
+    followingX = mouseX - dstMask.x;
+    followingY = mouseY - dstMask.y;
 }
 
-void Interface::UpdateFollowingPosition(const int& x, const int& y) {
+void Interface::UpdateFollowingPosition() {
     if (!(isMovable && followCursor))
         return;
 
-    dstMask.x = x - followingX;
-    dstMask.y = y - followingY;
+    dstMask.x = mouseX - followingX;
+    dstMask.y = mouseY - followingY;
 }
 
 bool Interface::CheckFocus(const int& x, const int& y) {
@@ -135,7 +135,7 @@ void Interface::SetVerticalCenterPosition() {
     dstMask.y = (height - dstMask.h) / 2;
 }
 
-void Interface::SetPosition(const short int x, const short int y) {
+void Interface::SetPosition(const short int &x, const short int &y) {
     XYPair parent_position = { 0, 0 };
     if (this->parent != nullptr) {
         parent_position = this->parent->GetPosition();
@@ -157,7 +157,7 @@ XYPair Interface::GetRelativePosition() {
     return pos;
 }
 
-void Interface::SetSize(const short int width, const short int height) {
+void Interface::SetSize(const short int &width, const short int &height) {
     dstMask.w = width;
     dstMask.h = height;
 }
@@ -197,14 +197,14 @@ void Interface::RemoveChild(Interface* child) {
     }
 }
 
-bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY) {
+bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b) {
     Interface* it = nullptr;
     for (int j = childs.size() - 1; j >= 0; --j) {
         it = childs.begin()[j];
-        if (it->IsOnMouseRange(mouseX, mouseY) && it->isRealShow()) {
+        if (it->IsOnMouseRange() && it->isRealShow()) {
             if (it->isParent()) {
-                if (!it->CheckLeftClick(b, mouseX, mouseY)) {
-                    it->OnMouseClick(b, mouseX, mouseY);
+                if (!it->CheckLeftClick(b)) {
+                    it->OnMouseClick(b);
                     return true;
                 }
                 else {
@@ -212,7 +212,7 @@ bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY
                 }
             }
             else {
-                it->OnMouseClick(b, mouseX, mouseY);
+                it->OnMouseClick(b);
                 return true;
             }
         }
@@ -220,31 +220,31 @@ bool Interface::CheckLeftClick(SDL_MouseButtonEvent& b, int &mouseX, int &mouseY
     return false;
 }
 
-void Interface::OnMouseClick(SDL_MouseButtonEvent& b, const int &x, const int &y) {
-    if (x > dstMask.x && x < (dstMask.x + dstMask.w) &&
-        y > dstMask.y && y < (dstMask.y + dstMask.h)) {
+void Interface::OnMouseClick(SDL_MouseButtonEvent& b) {
+    if (mouseX > dstMask.x && mouseX < (dstMask.x + dstMask.w) &&
+        mouseY > dstMask.y && mouseY < (dstMask.y + dstMask.h)) {
         if (b.button == SDL_BUTTON_LEFT)
-            OnLeftClick(x, y);
-        else OnRightClick(x, y);
+            OnLeftClick();
+        else OnRightClick();
     }
 }
 
-void Interface::OnLeftClick(const int& x, const int& y) {
+void Interface::OnLeftClick() {
     if (callback != nullptr) {
         callback();
     }
 }
 
-void Interface::OnRightClick(const int& x, const int& y) {
+void Interface::OnRightClick() {
     //cout << "Click dreapta la " << x << " " << y << endl;
 }
 
-void Interface::OnKeyPress(bool KEYS[], unsigned int currentKey) {
+void Interface::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
     //if(currentKey == SDLK_a)
         //cout << "Am apasat a: " << currentKey << endl;
 }
 
-void Interface::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
+void Interface::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
     //if (currentKey == SDLK_a)
        // cout << "Am ridicat a: " << currentKey << endl;
 }

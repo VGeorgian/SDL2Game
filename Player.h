@@ -12,6 +12,6 @@ public:
 	~Player();
 	bool Init();
 	void Render();
-	void OnKeyPress(bool KEYS[], unsigned int currentKey);
-	void OnKeyRelease(bool KEYS[], unsigned int currentKey);
+	void OnKeyPress(bool KEYS[], SDL_Scancode &currentKey);
+	void OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey);
 };

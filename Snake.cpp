@@ -177,7 +177,7 @@ void Snake::GenerateFruit(){
 	fruit->BringToFront();
 }
 
-void Snake::OnKeyPress(bool KEYS[], unsigned int currentKey) {
+void Snake::OnKeyPress(bool KEYS[], SDL_Scancode &currentKey) {
 	if (KEYS[SDL_SCANCODE_A]) {
 		direction = 0;
 		//cout << "Left";
@@ -198,7 +198,7 @@ void Snake::OnKeyPress(bool KEYS[], unsigned int currentKey) {
 		sprint = true;
 	}
 }
-void Snake::OnKeyRelease(bool KEYS[], unsigned int currentKey) {
+void Snake::OnKeyRelease(bool KEYS[], SDL_Scancode &currentKey) {
 	if (currentKey == SDL_SCANCODE_LSHIFT) {
 		sprint = false;
 	}
