@@ -4,7 +4,8 @@ Image::Image() {
 }
 
 Image::~Image() {
-    SDL_DestroyTexture(texture);
+    if(nullptr != texture)
+        SDL_DestroyTexture(texture);
 }
 
 bool Image::LoadImage(const char path[]) {

@@ -1,7 +1,25 @@
 #include <iostream>
 #include "MenuButton.h"
 
-MenuButton::MenuButton(const char* titlu, int fontSize) {
+MenuButton::MenuButton() {
+    text = nullptr;
+    blueText = nullptr;
+    redText = nullptr;
+}
+
+
+MenuButton::~MenuButton() {
+    if(nullptr != text)
+	    delete text;
+
+    if(nullptr != blueText)
+        delete blueText;
+
+    if (nullptr != redText)
+        delete redText;
+}
+
+bool MenuButton::Init(const char* titlu, int fontSize) {
     blueText = new TextLine;
     blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     blueText->SetParent(this);
@@ -31,10 +49,7 @@ MenuButton::MenuButton(const char* titlu, int fontSize) {
     TTF_SizeText(text->GetFont(), titlu, &w, &h);
     this->SetSize(w, h);
 
-}
-
-MenuButton::~MenuButton() {
-	delete text;
+    return true;
 }
 
 void MenuButton::OnMouseIn() {

@@ -6,19 +6,48 @@ Snake::Snake() {
 	timerMoving.SetDelay(0);
 	field = nullptr;
 	fruit = nullptr;
+	gameOverText = nullptr;
 	gameOverScreen = nullptr;
 	startScreen = nullptr;
+	closeButton = nullptr;
+	restartButton = nullptr;
+	startButton = nullptr;
+	scoreText = nullptr;
 	positionX = 13;
 	positionY = 8;
 	sprint = false;
 	isStarted = false;
 
-	closeButton = nullptr;
 	memset(fruitField, false, sizeof(bool) * FIELD_WIDTH * FIELD_HEIGHT);
-	gameOverText = nullptr;
-	restartButton = nullptr;
-	scoreText = nullptr;
-	startButton = nullptr;
+}
+
+Snake::~Snake() {
+	if (nullptr != field)
+		delete field;
+
+	if (nullptr != fruit)
+		delete fruit;
+
+	if (nullptr != gameOverText)
+		delete gameOverText;
+
+	if (nullptr != gameOverScreen)
+		delete gameOverScreen;
+
+	if (nullptr != startScreen)
+		delete startScreen;
+
+	if (nullptr != closeButton)
+		delete closeButton;
+
+	if (nullptr != restartButton)
+		delete restartButton;
+
+	if (nullptr != startButton)
+		delete startButton;
+
+	if (nullptr != scoreText)
+		delete scoreText;
 }
 
 bool Snake::Init() {
@@ -45,7 +74,8 @@ bool Snake::Init() {
 	startScreen->SetSize(750, 450);
 	startScreen->Show();
 
-	startButton = new MenuButton("START", 150);
+	startButton = new MenuButton();
+	startButton->Init("START", 150);
 	startButton->SetParent(startScreen);
 	startButton->SetPosition(230, 150);
 	startButton->SetHorizontalCenterPosition();
@@ -75,7 +105,8 @@ bool Snake::Init() {
 	scoreText->SetPosition(30, 90);
 	scoreText->Show();
 
-	restartButton = new MenuButton("Restart");
+	restartButton = new MenuButton();
+	restartButton->Init("Restart");
 	restartButton->SetParent(gameOverScreen);
 	restartButton->SetPosition(320, 260);
 	restartButton->SetHorizontalCenterPosition();

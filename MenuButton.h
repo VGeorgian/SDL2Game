@@ -13,9 +13,10 @@ protected:
     TextLine* blueText;
     TextLine* redText;
 public:
-    MenuButton(const char* titlu, int fontSize = 40);
+    MenuButton();
     ~MenuButton();
-
+    
+    bool Init(const char* titlu, int fontSize = 40);
     //bool LoadImage(const char path[]);
     //void Render();
     void SetLeftClickEvent(function<void(void)> callback_func);

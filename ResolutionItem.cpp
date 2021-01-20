@@ -7,7 +7,8 @@ ResolutionItem::ResolutionItem() {
 }
 
 ResolutionItem::~ResolutionItem() {
-
+	if (text != nullptr)
+		delete text;
 }
 
 

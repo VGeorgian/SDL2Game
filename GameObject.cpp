@@ -1,5 +1,13 @@
 #include "GameObject.h"
 
+GameObject::GameObject(){
+
+}
+
+GameObject::~GameObject() {
+
+}
+
 bool GameObject::isCollision(const SDL_Rect* rect, const int& x, const int& y) {
 	if (CheckFocus(rect->x - x, rect->y - y))
 		return true;

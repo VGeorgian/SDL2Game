@@ -18,6 +18,7 @@ TextLine::~TextLine() {
 	if (nullptr != texture) {
 		SDL_DestroyTexture(texture);
 	}
+	
 	if (nullptr != text) {
 		delete[] text;
 	}
@@ -56,7 +57,6 @@ bool TextLine::SetColor(SDL_Color color) {
 bool TextLine::SetText(const char sourceText[]) {
 	if (nullptr != text) {
 		delete[] text;
-		text = nullptr;
 	}
 
 	text = new char[strlen(sourceText) + 1];

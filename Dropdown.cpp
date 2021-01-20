@@ -2,6 +2,7 @@
 #include "Dropdown.h"
 using namespace std;
 using namespace std::placeholders;
+
 Dropdown::Dropdown() {
 	currentResolution = nullptr;
 	dropdownContent = nullptr;
@@ -10,7 +11,13 @@ Dropdown::Dropdown() {
 }
 
 Dropdown::~Dropdown() {
+	if (nullptr == currentResolution) {
+		delete currentResolution;
+	}
 	
+	if (nullptr == dropdownContent) {
+		delete dropdownContent;
+	}
 }
 
 bool Dropdown::Init() {

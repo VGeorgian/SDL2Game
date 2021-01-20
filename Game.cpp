@@ -16,17 +16,40 @@ Game::Game() {
     isRunning = true;
 
     MyInterface = nullptr;
+    textFPS = nullptr;
     titleImage = nullptr;
 
     gameMenu = nullptr;
     gameMap = nullptr;
     gameSettings = nullptr;
-
-    textFPS = nullptr;
     backButton = nullptr;
 
     resolutionX = 800;
     resolutionY = 600;
+}
+
+Game::~Game() {
+
+    if (nullptr != textFPS)
+        delete textFPS;
+
+    if (nullptr != titleImage)
+        delete titleImage;
+
+    if (nullptr != gameMenu)
+        delete gameMenu;
+
+    if (nullptr != gameMap)
+        delete gameMap;
+
+    if (nullptr != gameSettings)
+        delete gameSettings;
+
+    if (nullptr != backButton)
+        delete backButton;
+
+    if (nullptr != MyInterface)
+        delete MyInterface;
 }
 
 bool Game::Init() {
@@ -81,7 +104,8 @@ bool Game::Init() {
     CHECK(gameMap->Init(), "gameMap->Init()", __LINE__, __FILE__);
     gameMap->Hide();
 
-    backButton = new MenuButton("Inapoi la meniu", 25);
+    backButton = new MenuButton();
+    backButton->Init("Inapoi la meniu", 25);
     backButton->SetPosition(Interface::GetWindowSize().x - 170, 20);
     backButton->SetLeftClickEvent(bind(&Game::BackToMenuEvent, this));
     backButton->Show();
@@ -89,7 +113,7 @@ bool Game::Init() {
     gameSettings = new Settings;
     CHECK(gameSettings->Init(), "gameMap->Init()", __LINE__, __FILE__);
     gameSettings->Hide();
-    SettingsEvent();
+    StartEvent();
 
 
     textFPS = new TextLine;
@@ -104,30 +128,11 @@ bool Game::Init() {
     return true;
 }
 
-Game::~Game() {
-
-    if(nullptr != MyInterface)
-        delete MyInterface;
-
-    if (nullptr != gameMenu)
-       delete gameMenu;
-
-    if (nullptr != gameMap)
-        delete gameMap;
-
-
-    if (nullptr != textFPS)
-        delete textFPS;
-
-    TTF_Quit();
-}
-
 void Game::StartEvent() {
     gameMenu->Hide();
     gameMap->ShowMap();
     backButton->BringToFront();
     backButton->Show();
-
 }
 
 
@@ -179,6 +184,8 @@ void Game::Run() {
             }
         }
 
+
+
         SDL_GetMouseState(&Interface::mouseX, &Interface::mouseY);
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -186,9 +193,9 @@ void Game::Run() {
                 //printf("Key press detected: %d\n", event.key.keysym.sym);
                 if (event.key.keysym.scancode < SDL_NUM_SCANCODES && event.key.keysym.scancode >= 0) {
                     KEYS[event.key.keysym.scancode] = true;
-                    for (auto it : MyInterface->uiElements) {
-                        if(it->isShow())
-                            it->OnKeyPress(KEYS, event.key.keysym.scancode);
+                    for (i = 0; i < MyInterface->uiElements.size(); ++i) {
+                        if(MyInterface->uiElements.begin()[i]->isShow())
+                            MyInterface->uiElements.begin()[i]->OnKeyPress(KEYS, event.key.keysym.scancode);
                     }
                 }
                 break;
@@ -197,9 +204,9 @@ void Game::Run() {
                 //printf("Key release detected: %d\n", event.key.keysym.sym);
                 if (event.key.keysym.scancode < SDL_NUM_SCANCODES && event.key.keysym.scancode >= 0) {
                     KEYS[event.key.keysym.scancode] = false;
-                    for (auto it : MyInterface->uiElements) {
-                        if (it->isShow())
-                            it->OnKeyRelease(KEYS, event.key.keysym.scancode);
+                    for (i = 0; i < MyInterface->uiElements.size(); ++i) {
+                        if (MyInterface->uiElements.begin()[i]->isShow())
+                            MyInterface->uiElements.begin()[i]->OnKeyRelease(KEYS, event.key.keysym.scancode);
                     }
                 }
                 break;
@@ -236,9 +243,9 @@ void Game::Run() {
 
             case SDL_MOUSEBUTTONUP:
                 //printf("Mouse release detected\n");
-                for (auto it : MyInterface->uiElements) {
-                    it->SetCursorFollwing(false);
-                    it->OnMouseRelease();
+                for (i = 0; i < MyInterface->uiElements.size(); ++i) {
+                    MyInterface->uiElements.begin()[i]->SetCursorFollwing(false);
+                    MyInterface->uiElements.begin()[i]->OnMouseRelease();
                 }
 
                 break;
@@ -272,6 +279,8 @@ void Game::Run() {
             SDL_RenderClear(Interface::renderer);
 
         memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
+
+        // TODO: Randarea separatata de update -> mult mai rapid
 
         i = 0;
         int64_t interfaceSize = MyInterface->uiElements.size();

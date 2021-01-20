@@ -14,6 +14,7 @@ Settings::Settings() {
 	volumeRange = nullptr;
 	musicCheckbox = nullptr;
 	resolutionDropdown = nullptr;
+
 	currentResolution = { 800, 600 };
 	musicPlaying = false;
 	musicVolume = 0;
@@ -23,11 +24,26 @@ Settings::~Settings() {
 	if (nullptr != title)
 		delete title;
 
+	if (nullptr != saveButton)
+		delete saveButton;
+
 	if (nullptr != screenSizeLabel)
 		delete screenSizeLabel;
 
 	if (nullptr != musicStatusLabel)
 		delete musicStatusLabel;
+
+	if (nullptr != volumeLabel)
+		delete volumeLabel;
+
+	if (nullptr != volumeRange)
+		delete volumeRange;
+
+	if (nullptr != musicCheckbox)
+		delete musicCheckbox;
+
+	if (nullptr != resolutionDropdown)
+		delete resolutionDropdown;
 }
 
 void Settings::ReadSettingsFromFile() {
@@ -96,7 +112,8 @@ bool Settings :: Init() {
 	title->SetPosition(30, 60);
 	title->Show();
 
-	saveButton = new MenuButton("SALVEAZÃ SETARI", 60);
+	saveButton = new MenuButton();
+	saveButton->Init("SALVEAZÃ SETARI", 60);
 	saveButton->SetPosition(30, GetWindowSize().y - 100);
 	saveButton->SetParent(this);
 	saveButton->SetLeftClickEvent(bind(&Settings::SaveSettings, this));

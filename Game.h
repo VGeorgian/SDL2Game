@@ -10,9 +10,8 @@
 
 class Game {
 private:
-	Interface* MyInterface;
 	bool isRunning;
-
+	Interface* MyInterface;
 	TextLine* textFPS;
 	Image* titleImage;
 

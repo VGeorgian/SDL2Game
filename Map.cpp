@@ -13,11 +13,18 @@ Map::Map() {
     movingBottom = false;
     
     snakeGame = nullptr;
+    spaceInvadersGame = nullptr;
 }
 
 Map::~Map() {
     if (nullptr != player)
         delete player;
+
+    if (nullptr != snakeGame)
+        delete snakeGame;
+
+    if (nullptr != spaceInvadersGame)
+        delete spaceInvadersGame;
 }
 
 bool Map::CheckCollision(const int& x, const int& y) {
@@ -75,8 +82,17 @@ bool Map::Init() {
     snakeMachine->SetLeftClickEvent(bind(&Map::PlaySnake, this));
     snakeMachine->Show();
 
+    GameObject* spaceInvadersMachine = new GameObject;
+    spaceInvadersMachine->SetParent(this);
+    spaceInvadersMachine->LoadImage(buffer);
+    spaceInvadersMachine->SetPosition(800, 500);
+    spaceInvadersMachine->SetSize(150, 300);
+    spaceInvadersMachine->SetLeftClickEvent(bind(&Map::PlaySpaceInvaders, this));
+    spaceInvadersMachine->Show();
+
 
     collision.push_back(snakeMachine);
+    collision.push_back(spaceInvadersMachine);
 
     player = new Player;
     CHECK(player->Init(), "player->Init()", __LINE__, __FILE__);
@@ -86,11 +102,19 @@ bool Map::Init() {
     snakeGame->Init();
     snakeGame->Hide();
 
+    spaceInvadersGame = new SpaceInvaders;
+    spaceInvadersGame->Init();
+    spaceInvadersGame->Hide();
+    
+
     return true;
 }
 void Map::PlaySnake() {
-    cout << "Snake game start\n";
     snakeGame->OpenGame();
+}
+
+void Map::PlaySpaceInvaders() {
+    spaceInvadersGame->OpenGame();
 }
 
 void Map::ShowMap() {

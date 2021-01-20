@@ -18,6 +18,7 @@ class Snake : public Image {
 	MenuButton* startButton;
 	TextLine* gameOverText;
 	TextLine* scoreText;
+
 	char positionX, positionY; // coordonatele capului sarpelui pe harta
 	vector <Image*> snake; // blocurile sarpelui
 	bool sprint; // verifica daca sarpele trebuie sa isi mareasca viteza
@@ -26,7 +27,7 @@ class Snake : public Image {
 	//vector <int> snake;
 public:
 	Snake();
-	~Snake() {};
+	~Snake();
 
 	void OnKeyPress(bool KEYS[], int currentKey);
 	void OnKeyRelease(bool KEYS[], int currentKey);

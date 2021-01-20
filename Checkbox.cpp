@@ -6,7 +6,8 @@ Checkbox::Checkbox() {
 }
 
 Checkbox::~Checkbox() {
-
+	if (nullptr != arrow)
+		delete arrow;
 }
 
 bool Checkbox::Init() {

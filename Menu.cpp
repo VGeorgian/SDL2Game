@@ -38,23 +38,27 @@ bool Menu::Init() {
     titleImage->SetSize(358, 98);
     titleImage->Show();
 
-    startButton = new MenuButton("START");
+    startButton = new MenuButton;
+    startButton->Init("START");
     startButton->SetParent(this);
     startButton->SetPosition(60, 250);
     //startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
     startButton->Show();
 
-    settingsButton = new MenuButton("SETARI");
+    settingsButton = new MenuButton();
+    settingsButton->Init("SETARI");
     settingsButton->SetParent(this);
     settingsButton->SetPosition(60, 295);
     settingsButton->Show();
 
-    helpButton = new MenuButton("CUM SE JOACA?");
+    helpButton = new MenuButton();
+    helpButton->Init("CUM SE JOACA?");
     helpButton->SetParent(this);
     helpButton->SetPosition(60, 340);
     helpButton->Show();
 
-    exitButton = new MenuButton("IESIRE");
+    exitButton = new MenuButton();
+    exitButton->Init("IESIRE");
     exitButton->SetParent(this);
     exitButton->SetPosition(60, 385);
    // helpButton->SetLeftClickEvent(bind(&Game::ExitEvent, this));

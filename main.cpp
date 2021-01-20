@@ -29,6 +29,7 @@ int main(void) {
     SDL_FreeSurface(Interface::ScreenSurface);
     SDL_DestroyWindow(Interface::Window);
     SDL_DestroyRenderer(Interface::renderer);
+    //TTF_Quit();
     SDL_Quit();
 
     return 0;
