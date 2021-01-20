@@ -33,6 +33,9 @@ bool Image::LoadImage(const char path[]) {
 
 void Image::Render() {
     if (texture) {
-        SDL_RenderCopy(renderer, texture, NULL, &dstMask);
+        if(srcMask.w != 0 && srcMask.h != 0)
+            SDL_RenderCopy(renderer, texture, &srcMask, &dstMask);
+        else
+            SDL_RenderCopy(renderer, texture, NULL, &dstMask);
     }
 }

@@ -2,10 +2,10 @@
 
 #define MAX_FPS 144
 #define FPS_LIMIT_ENABLED 1
-#define MAX_INTERFACE_ELEMENTS 256
+#define MAX_INTERFACE_ELEMENTS 1024
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+//#define GetWindowSize().x 1280
+//#define GetWindowSize().y 720
 #define DEBUG 1
 
 

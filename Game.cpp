@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <SDL_mixer.h>
+#include <fstream>
 
 #include "Game.h"
 #include "config.h"
@@ -23,18 +23,35 @@ Game::Game() {
     gameSettings = nullptr;
 
     textFPS = nullptr;
+    backButton = nullptr;
+
+    resolutionX = 800;
+    resolutionY = 600;
 }
 
 bool Game::Init() {
+    
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         CHECK_ERROR(false, "SDL-ul nu s-a putut initializa", SDL_GetError(), __LINE__, __FILE__);
+    }
+
+    int resolutionX, resolutionY;
+    SDL_DisplayMode DM;
+    SDL_GetCurrentDisplayMode(0, &DM);
+    ifstream IN("game.config", ifstream::in);
+    IN >> resolutionX >> resolutionY;
+
+    if (resolutionX > DM.w || resolutionY > DM.h) {
+        resolutionX = DM.w;
+        resolutionY = DM.h;
     }
 
     Interface::Window = SDL_CreateWindow("Retro Hub",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT,
+        resolutionX,
+        resolutionY,
         SDL_WINDOW_SHOWN
     );
 
@@ -50,17 +67,6 @@ bool Game::Init() {
         CHECK_ERROR(false, "Eroare la initializarea font-ului", TTF_GetError(), __LINE__, __FILE__);
     }
 
-    /*
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-    {
-        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-        return false;
-    }
-
-    Mix_Music* bgMusic = NULL;
-    bgMusic = Mix_LoadMUS("assets/sound/background.mp3");
-    Mix_PlayMusic(bgMusic, 0);*/
-
     MyInterface = new Interface(true);
 
     gameMenu = new Menu;
@@ -75,10 +81,16 @@ bool Game::Init() {
     CHECK(gameMap->Init(), "gameMap->Init()", __LINE__, __FILE__);
     gameMap->Hide();
 
+    backButton = new MenuButton("Inapoi la meniu", 25);
+    backButton->SetPosition(Interface::GetWindowSize().x - 170, 20);
+    backButton->SetLeftClickEvent(bind(&Game::BackToMenuEvent, this));
+    backButton->Show();
+
     gameSettings = new Settings;
     CHECK(gameSettings->Init(), "gameMap->Init()", __LINE__, __FILE__);
-    gameSettings->SetBackButtonEvent(bind(&Game::BackToMenuEvent, this));
     gameSettings->Hide();
+    SettingsEvent();
+
 
     textFPS = new TextLine;
     textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
@@ -113,12 +125,17 @@ Game::~Game() {
 void Game::StartEvent() {
     gameMenu->Hide();
     gameMap->ShowMap();
+    backButton->BringToFront();
+    backButton->Show();
+
 }
 
 
 void Game::SettingsEvent() {
     gameMenu->Hide();
-    gameSettings->Show();
+    gameSettings->ShowSettings();
+    backButton->BringToFront();
+    backButton->Show();
 }
 
 void Game::ExitEvent() {
@@ -127,8 +144,9 @@ void Game::ExitEvent() {
 
 void Game::BackToMenuEvent() {
     gameMenu->Show();
-    gameMap->Hide();
+    gameMap->HideMap();
     gameSettings->Hide();
+    backButton->Hide();
 }
 
 void Game::Run() {
@@ -194,7 +212,8 @@ void Game::Run() {
                 for (int64_t j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
                     if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange()) {
                         if (MyInterface->uiElements.begin()[j]->isParent()) {
-                            MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button);
+                            if (!MyInterface->uiElements.begin()[j]->CheckLeftClick(event.button))
+                                MyInterface->uiElements.begin()[j]->OnMouseClick(event.button);
                             MyInterface->uiElements.begin()[j]->SetCursorFollwing(true);
                             if(MyInterface->uiElements.begin()[j]->IsMovable())
                                 MyInterface->uiElements.begin()[j]->BringToFront();
@@ -219,6 +238,7 @@ void Game::Run() {
                 //printf("Mouse release detected\n");
                 for (auto it : MyInterface->uiElements) {
                     it->SetCursorFollwing(false);
+                    it->OnMouseRelease();
                 }
 
                 break;

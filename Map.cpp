@@ -98,6 +98,11 @@ void Map::ShowMap() {
     this->Show();
 }
 
+void Map::HideMap() {
+    player->Hide();
+    this->Hide();
+}
+
 
 void Map::OnKeyPress(bool KEYS[], int currentKey) {
     if (KEYS[SDL_SCANCODE_A]) {

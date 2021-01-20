@@ -13,16 +13,13 @@ TextLine::TextLine():Interface() {
 TextLine::~TextLine() {
 	if (nullptr != font) {
 		TTF_CloseFont(font);
-		font = nullptr;
 	}
 
 	if (nullptr != texture) {
 		SDL_DestroyTexture(texture);
-		texture = nullptr;
 	}
 	if (nullptr != text) {
 		delete[] text;
-		text = nullptr;
 	}
 }
 

@@ -28,7 +28,7 @@ Menu::~Menu() {
 bool Menu::Init() {
     CHECK(this->LoadImage("assets/img/background_menu.jpg"), "menuScreen->LoadImage()", __LINE__, __FILE__);
     this->SetPosition(0, 0);
-    this->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    this->SetSize(GetWindowSize().x, GetWindowSize().y);
     //this->Show();
 
     titleImage = new Image;

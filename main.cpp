@@ -24,12 +24,7 @@ int main(void) {
 
     CHECK(MyGame.Init(), "MyGame.Init()", __LINE__, __FILE__);
 
-    try {
-        MyGame.Run();
-    }
-    catch(const std::exception& e) {
-        cout << e.what();
-    }
+    MyGame.Run();
 
     SDL_FreeSurface(Interface::ScreenSurface);
     SDL_DestroyWindow(Interface::Window);

@@ -19,6 +19,9 @@ private:
 	Menu* gameMenu;
 	Map* gameMap;
 	Settings* gameSettings;
+	MenuButton* backButton;
+
+	int resolutionX, resolutionY;
 
 public:
 	Game();

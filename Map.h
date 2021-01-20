@@ -6,6 +6,7 @@
 #include "Timer.h"
 #include "GameObject.h"
 #include "Snake.h"
+#include "MenuButton.h"
 
 class Map : public Image {
 	Player* player;
@@ -28,4 +29,5 @@ public:
 
 	void PlaySnake();
 	void ShowMap();
+	void HideMap();
 };

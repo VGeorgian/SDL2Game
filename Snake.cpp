@@ -186,19 +186,19 @@ void Snake::GenerateFruit(){
 }
 
 void Snake::OnKeyPress(bool KEYS[], int currentKey) {
-	if (KEYS[SDL_SCANCODE_A]) {
+	if (KEYS[SDL_SCANCODE_A] || KEYS[SDL_SCANCODE_LEFT]) {
 		direction = 0;
 		//cout << "Left";
 	}
-	if (KEYS[SDL_SCANCODE_W]) {
+	if (KEYS[SDL_SCANCODE_W] || KEYS[SDL_SCANCODE_UP]) {
 		direction = 1;
 		//cout << "Left";
 	}
-	if (KEYS[SDL_SCANCODE_D]) {
+	if (KEYS[SDL_SCANCODE_D] || KEYS[SDL_SCANCODE_RIGHT]) {
 		direction = 2;
 		//cout << "Left";
 	}
-	if (KEYS[SDL_SCANCODE_S]) {
+	if (KEYS[SDL_SCANCODE_S] || KEYS[SDL_SCANCODE_DOWN]) {
 		direction = 3;
 		//cout << "Left";
 	}

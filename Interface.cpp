@@ -126,12 +126,12 @@ bool Interface::CheckIfRunning() {
 }
 
 void Interface::SetHorizontalCenterPosition() {
-    int width = GetParent() ? GetParent()->GetSize().x : SCREEN_WIDTH;
+    int width = GetParent() ? GetParent()->GetSize().x : GetWindowSize().x;
     dstMask.x = (width - dstMask.w) / 2;
 }
 
 void Interface::SetVerticalCenterPosition() {
-    int height = GetParent() ? GetParent()->GetSize().y : SCREEN_HEIGHT;
+    int height = GetParent() ? GetParent()->GetSize().y : GetWindowSize().y;
     dstMask.y = (height - dstMask.h) / 2;
 }
 
@@ -163,7 +163,7 @@ void Interface::SetSize(const short int &width, const short int &height) {
 }
 
 XYPair Interface::GetSize() {
-    XYPair pos = { dstMask.x, dstMask.y };
+    XYPair pos = { dstMask.w, dstMask.h };
     return pos;
 }
 
@@ -267,4 +267,10 @@ bool Interface::isRealShow() {
     }
 
     return true;
+}
+
+XYPair Interface::GetWindowSize() {
+    XYPair tmp = {0, 0};
+    SDL_GetWindowSize(Window, &tmp.x, &tmp.y);
+    return tmp;
 }

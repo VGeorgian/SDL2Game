@@ -45,6 +45,7 @@ public:
 	void SetPosition(const short int &x, const short int &y);
 	XYPair GetPosition();
 	XYPair GetRelativePosition();
+	static XYPair GetWindowSize();
 
 	void SetSize(const short int &width, const short int &height);
 	XYPair GetSize();
@@ -67,6 +68,7 @@ public:
 	void Hide() { isVisible = false; }
 
 	void OnMouseClick(SDL_MouseButtonEvent& b);
+	virtual void OnMouseRelease() {};
 	virtual void OnLeftClick();
 	virtual void OnRightClick();
 	virtual void SetLeftClickEvent(function<void(void)> callback_func);
