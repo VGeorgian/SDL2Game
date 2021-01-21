@@ -293,7 +293,6 @@ void Game::Run() {
             
             if (MyInterface->uiElements.begin()[it]->GetParent() == nullptr) {
                 MyInterface->uiElements.begin()[it]->UpdateFollowingPosition();
-                MyInterface->uiElements.begin()[it]->CheckPressedKeys();
                 MyInterface->uiElements.begin()[it]->Update();
                 if (MyInterface->uiElements.begin()[it]->isShow() && b_canRender) {
                     MyInterface->uiElements.begin()[it]->VerifyMouseState();
@@ -320,7 +319,6 @@ void Game::Run() {
                                 }
 
                                 MyInterface->uiElements.begin()[j]->UpdateFollowingPosition();
-                                MyInterface->uiElements.begin()[j]->CheckPressedKeys();
                                 MyInterface->uiElements.begin()[j]->Update();
                                 MyInterface->uiElements.begin()[j]->UpdatePosition();
 

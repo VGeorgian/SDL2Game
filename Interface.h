@@ -2,11 +2,12 @@
 #include <functional>
 #include "vector"
 #include "SDL.h"
+#include "AbstractInterface.h"
 #include "config.h"
 
 using namespace std;
 
-class Interface {
+class Interface : public AbstractInterface {
 
 protected:
 	Interface* parent;
@@ -16,11 +17,11 @@ protected:
 	SDL_Rect dstMask;
 	int x, y;
 	bool b_isFocusable;
-	bool isMovable;
-	bool followCursor;
-	int followingX, followingY;
+	bool isMovable; 
+	bool followCursor; // urmarire cursor
+	int followingX, followingY; 
 	bool isMouseIn;
-	std::function<void(void)> callback;
+	std::function<void(void)> callback; // Callback pt leftclick
 	bool selfDestroy; // Distrugere automata dupa randare
 	vector <Interface*> childs;
 
@@ -51,9 +52,8 @@ public:
 	XYPair GetSize();
 
 	void UpdatePosition();
-	void CheckPressedKeys() {};
-	virtual void Update() {};
-	virtual void Render() {};
+	void Update() {};
+	void Render() {};
 	bool CheckIfRunning();
 	
 	void SetParent(Interface* parent);
