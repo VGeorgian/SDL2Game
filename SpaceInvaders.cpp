@@ -88,7 +88,8 @@ void SpaceInvaders::EndGame() {
 }
 
 bool SpaceInvaders::Init() {
-	this->LoadImage("assets/img/spaceinvaders-board.png");
+	CHECK(this->LoadImage("assets/img/spaceinvaders-board.png"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/spaceinvaders-board.png");
 	this->SetSize(800, 600);
 	this->SetVerticalCenterPosition();
 	this->SetHorizontalCenterPosition();
@@ -96,7 +97,8 @@ bool SpaceInvaders::Init() {
 	this->AddMovableTag();
 
 	closeButton = new Image;
-	closeButton->LoadImage("assets/img/close_button.png");
+	CHECK(closeButton->LoadImage("assets/img/close_button.png"), "closeButton->LoadImage()", __LINE__, __FILE__);
+	//closeButton->LoadImage("assets/img/close_button.png");
 	closeButton->SetParent(this);
 	closeButton->SetPosition(750, 15);
 	closeButton->SetSize(30, 30);
@@ -104,7 +106,8 @@ bool SpaceInvaders::Init() {
 	closeButton->Show();
 
 	gameField = new Image;
-	gameField->LoadImage("assets/img/object-black.png");
+	CHECK(gameField->LoadImage("assets/img/object-black.png"), "gameField->LoadImage()", __LINE__, __FILE__);
+	//gameField->LoadImage("assets/img/object-black.png");
 	gameField->SetParent(this);
 	gameField->SetPosition(24, 120);
 	gameField->SetHorizontalCenterPosition();
@@ -112,27 +115,31 @@ bool SpaceInvaders::Init() {
 	gameField->Show();
 
 	player = new Image;
-	player->LoadImage("assets/img/space-player.png");
+	CHECK(player->LoadImage("assets/img/space-player.png"), "player->LoadImage()", __LINE__, __FILE__);
+	//player->LoadImage("assets/img/space-player.png");
 	player->SetParent(gameField);
 	player->SetPosition(10, 400);
 	player->SetSize(48, 24);
 	player->Show();
 
 	startScreen = new Image;
-	startScreen->LoadImage("assets/img/snake-game-over.png");
+	CHECK(startScreen->LoadImage("assets/img/snake-game-over.png"), "startScreen->LoadImage()", __LINE__, __FILE__);
+	//startScreen->LoadImage("assets/img/snake-game-over.png");
 	startScreen->SetParent(gameField);
 	startScreen->SetPosition(0, 0);
 	startScreen->SetSize(750, 450);
 	startScreen->Show();
 
 	gameOverScreen = new Image;
-	gameOverScreen->LoadImage("assets/img/snake-game-over.png");
+	CHECK(gameOverScreen->LoadImage("assets/img/snake-game-over.png"), "gameOverScreen->LoadImage()", __LINE__, __FILE__);
+	//gameOverScreen->LoadImage("assets/img/snake-game-over.png");
 	gameOverScreen->SetParent(gameField);
 	gameOverScreen->SetPosition(0, 0);
 	gameOverScreen->SetSize(750, 450);
 
 	startButton = new MenuButton();
-	startButton->Init("START", 150);
+	CHECK(startButton->Init("START", 150), "startButton->Init()", __LINE__, __FILE__);
+	//startButton->Init("START", 150);
 	startButton->SetParent(startScreen);
 	startButton->SetPosition(230, 150);
 	startButton->SetHorizontalCenterPosition();
@@ -140,7 +147,8 @@ bool SpaceInvaders::Init() {
 	startButton->Show();
 
 	restartButton = new MenuButton();
-	restartButton->Init("Restart");
+	CHECK(restartButton->Init("Restart"), "restartButton->Init()", __LINE__, __FILE__);
+	//restartButton->Init("Restart");
 	restartButton->SetParent(gameOverScreen);
 	restartButton->SetPosition(320, 260);
 	restartButton->SetHorizontalCenterPosition();
@@ -149,17 +157,23 @@ bool SpaceInvaders::Init() {
 
 	scoreText = new TextLine;
 	scoreText->SetParent(this);
-	scoreText->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
-	scoreText->SetColor(255, 255, 255);
-	scoreText->SetText("NIVEL: 1");
+	CHECK(scoreText->SetFont("assets/font/NerkoOne-Regular.ttf", 20), "scoreText->SetFont()", __LINE__, __FILE__);
+	CHECK(scoreText->SetColor(255, 255, 255), "scoreText->SetColor()", __LINE__, __FILE__);
+	CHECK(scoreText->SetText("NIVEL: 1"), "scoreText->SetText()", __LINE__, __FILE__);
+	//scoreText->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
+	//scoreText->SetColor(255, 255, 255);
+	//scoreText->SetText("NIVEL: 1");
 	scoreText->SetPosition(30, 94);
 	scoreText->Show();
 
 	levelText = new TextLine;
 	levelText->SetParent(this);
-	levelText->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
-	levelText->SetColor(255, 255, 255);
-	levelText->SetText("SCOR: 0");
+	CHECK(levelText->SetFont("assets/font/NerkoOne-Regular.ttf", 20), "levelText->SetFont()", __LINE__, __FILE__);
+	CHECK(levelText->SetColor(255, 255, 255), "levelText->SetColor()", __LINE__, __FILE__);
+	CHECK(levelText->SetText("SCOR: 0"), "levelText->SetText()", __LINE__, __FILE__);
+	//levelText->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
+	//levelText->SetColor(255, 255, 255);
+	//levelText->SetText("SCOR: 0");
 	levelText->SetPosition(150, 94);
 	levelText->Show();
 	
@@ -224,6 +238,7 @@ void SpaceInvaders::OnKeyRelease(bool KEYS[], int currentKey) {
 
 void SpaceInvaders::Update() {
 	if (isStarted) {
+
 		SDL_Rect* tmpRect = nullptr;
 		if (direction == 1 && playerPosition > 10) {
 			--playerPosition;
@@ -231,10 +246,10 @@ void SpaceInvaders::Update() {
 		else if (direction == 2 && playerPosition < 688) {
 			++playerPosition;
 		}
-		player->SetPosition(playerPosition, 400);
+		player->SetPosition(playerPosition, 400); // Updatare pozitie nava
 
-		if (!enemies.size()) {
-			if (currentLevel == 3) {
+		if (!enemies.size()) { // Verific daca toti inamicii au fost ucisi
+			if (currentLevel == 3) { // Daca s-a ajuns la nivelul 3, s-a terminat jocul
 				EndGame();
 			}
 			else {
@@ -246,6 +261,7 @@ void SpaceInvaders::Update() {
 				levelText->SetText(tmpBuffer);
 			}
 		}
+
 		for (int i = 0; i < playerAmmo.size(); ++i) {
 			// Dealocare memorie munitie dupa iesire din ecran
 			if (playerAmmo.begin()[i]->GetRelativePosition().y < 10) {

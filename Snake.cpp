@@ -51,7 +51,8 @@ Snake::~Snake() {
 }
 
 bool Snake::Init() {
-	this->LoadImage("assets/img/snake-board.png");
+	CHECK(this->LoadImage("assets/img/snake-board.png"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/snake-board.png");
 	this->SetSize(800, 600);
 	this->SetVerticalCenterPosition();
 	this->SetHorizontalCenterPosition();
@@ -60,7 +61,8 @@ bool Snake::Init() {
 	this->Show();
 
 	field = new Image;
-	field->LoadImage("assets/img/snake-field.png");
+	CHECK(field->LoadImage("assets/img/snake-field.png"), "field->LoadImage()", __LINE__, __FILE__);
+	//field->LoadImage("assets/img/snake-field.png");
 	field->SetParent(this);
 	field->SetPosition(24, 130);
 	field->SetHorizontalCenterPosition();
@@ -68,14 +70,16 @@ bool Snake::Init() {
 	field->Show();
 
 	startScreen = new Image;
-	startScreen->LoadImage("assets/img/snake-game-over.png");
+	CHECK(startScreen->LoadImage("assets/img/snake-game-over.png"), "startScreen->LoadImage()", __LINE__, __FILE__);
+	//startScreen->LoadImage("assets/img/snake-game-over.png");
 	startScreen->SetParent(field);
 	startScreen->SetPosition(0, 0);
 	startScreen->SetSize(750, 450);
 	startScreen->Show();
 
 	startButton = new MenuButton();
-	startButton->Init("START", 150);
+	CHECK(startButton->Init("START", 150), "startButton->Init()", __LINE__, __FILE__);
+	//startButton->Init("START", 150);
 	startButton->SetParent(startScreen);
 	startButton->SetPosition(230, 150);
 	startButton->SetHorizontalCenterPosition();
@@ -83,30 +87,37 @@ bool Snake::Init() {
 	startButton->Show();
 
 	gameOverScreen = new Image;
-	gameOverScreen->LoadImage("assets/img/snake-game-over.png");
+	CHECK(gameOverScreen->LoadImage("assets/img/snake-game-over.png"), "gameOverScreen->LoadImage()", __LINE__, __FILE__);
+	//gameOverScreen->LoadImage("assets/img/snake-game-over.png");
 	gameOverScreen->SetParent(field);
 	gameOverScreen->SetPosition(0, 0);
 	gameOverScreen->SetSize(750, 450);
-	//gameOverScreen->Show();
 
 	gameOverText = new TextLine;
 	gameOverText->SetParent(gameOverScreen);
-	gameOverText->SetFont("assets/font/Bangers-Regular.ttf", 100);
-	gameOverText->SetColor(255, 255, 255);
-	gameOverText->SetText("GAME OVER");
+	CHECK(gameOverText->SetFont("assets/font/Bangers-Regular.ttf", 100), "gameOverText->SetFont()", __LINE__, __FILE__);
+	CHECK(gameOverText->SetColor(255, 255, 255), "gameOverText->SetColor()", __LINE__, __FILE__);
+	CHECK(gameOverText->SetText("GAME OVER"), "gameOverText->SetText()", __LINE__, __FILE__);
+	//gameOverText->SetFont("assets/font/Bangers-Regular.ttf", 100);
+	//gameOverText->SetColor(255, 255, 255);
+	//gameOverText->SetText("GAME OVER");
 	gameOverText->SetPosition(185, 50);
 	gameOverText->Show();
 
 	scoreText = new TextLine;
 	scoreText->SetParent(this);
-	scoreText->SetFont("assets/font/Bangers-Regular.ttf", 30);
-	scoreText->SetColor(255, 255, 255);
-	scoreText->SetText("SCOR: 0");
+	CHECK(scoreText->SetFont("assets/font/Bangers-Regular.ttf", 30), "scoreText->SetFont()", __LINE__, __FILE__);
+	CHECK(scoreText->SetColor(255, 255, 255), "scoreText->SetColor()", __LINE__, __FILE__);
+	CHECK(scoreText->SetText("SCOR: 0"), "scoreText->SetText()", __LINE__, __FILE__);
+	//scoreText->SetFont("assets/font/Bangers-Regular.ttf", 30);
+	//scoreText->SetColor(255, 255, 255);
+	//scoreText->SetText("SCOR: 0");
 	scoreText->SetPosition(30, 90);
 	scoreText->Show();
 
 	restartButton = new MenuButton();
-	restartButton->Init("Restart");
+	CHECK(restartButton->Init("Restart"), "restartButton->Init()", __LINE__, __FILE__);
+	//restartButton->Init("Restart");
 	restartButton->SetParent(gameOverScreen);
 	restartButton->SetPosition(320, 260);
 	restartButton->SetHorizontalCenterPosition();
@@ -114,7 +125,8 @@ bool Snake::Init() {
 	restartButton->Show();
 
 	Image* tmpImg = new Image;
-	tmpImg->LoadImage("assets/img/snake.png");
+	CHECK(tmpImg->LoadImage("assets/img/snake.png"), "tmpImg->LoadImage()", __LINE__, __FILE__);
+	//tmpImg->LoadImage("assets/img/snake.png");
 	tmpImg->SetParent(field);
 	tmpImg->SetPosition((positionX - 1) * 30, (positionY - 1) * 30);
 	tmpImg->SetSize(30, 30);
@@ -123,14 +135,16 @@ bool Snake::Init() {
 	snake.push_back(tmpImg);
 
 	fruit = new Image;
-	fruit->LoadImage("assets/img/snake-fruit.png");
+	CHECK(fruit->LoadImage("assets/img/snake-fruit.png"), "fruit->LoadImage()", __LINE__, __FILE__);
+	//fruit->LoadImage("assets/img/snake-fruit.png");
 	fruit->SetParent(field);
 	fruit->SetPosition(10 * 30, 10 * 30);
 	fruit->SetSize(30, 30);
 	fruit->Show();
 
 	closeButton = new Image;
-	closeButton->LoadImage("assets/img/close_button.png");
+	CHECK(closeButton->LoadImage("assets/img/close_button.png"), "closeButton->LoadImage()", __LINE__, __FILE__);
+	//closeButton->LoadImage("assets/img/close_button.png");
 	closeButton->SetParent(this);
 	closeButton->SetPosition(750, 15);
 	closeButton->SetSize(30, 30);

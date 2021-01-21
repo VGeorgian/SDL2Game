@@ -21,27 +21,36 @@ MenuButton::~MenuButton() {
 
 bool MenuButton::Init(const char* titlu, int fontSize) {
     blueText = new TextLine;
-    blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     blueText->SetParent(this);
-    blueText->SetColor(0, 0, 255);
-    blueText->SetText(titlu);
+    CHECK(blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize), "blueText->SetFont()", __LINE__, __FILE__);
+    CHECK(blueText->SetColor(0, 0, 255), "blueText->SetColor()", __LINE__, __FILE__);
+    CHECK(blueText->SetText(titlu), "blueText->SetText()", __LINE__, __FILE__);
+    //blueText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
+    //blueText->SetColor(0, 0, 255);
+    //blueText->SetText(titlu);
     blueText->SetPosition(0, 0);
     blueText->Show();
 
     redText = new TextLine;
-    redText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     redText->SetParent(this);
-    redText->SetColor(255, 0, 0);
-    redText->SetText(titlu);
+    CHECK(redText->SetFont("assets/font/Bangers-Regular.ttf", fontSize), "redText->SetFont()", __LINE__, __FILE__);
+    CHECK(redText->SetColor(255, 0, 0), "redText->SetColor()", __LINE__, __FILE__);
+    CHECK(redText->SetText(titlu), "redText->SetText()", __LINE__, __FILE__);
+    //redText->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
+    //redText->SetColor(255, 0, 0);
+    //redText->SetText(titlu);
     redText->SetPosition(0, 0);
     redText->Show();
 
 
     text = new TextLine;
-    text->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
     text->SetParent(this);
-    text->SetColor(255, 255, 255);
-    text->SetText(titlu);
+    CHECK(text->SetFont("assets/font/Bangers-Regular.ttf", fontSize), "text->SetFont()", __LINE__, __FILE__);
+    CHECK(text->SetColor(255, 255, 255), "text->SetColor()", __LINE__, __FILE__);
+    CHECK(text->SetText(titlu), "text->SetText()", __LINE__, __FILE__);
+    //text->SetFont("assets/font/Bangers-Regular.ttf", fontSize);
+    //text->SetColor(255, 255, 255);
+    //text->SetText(titlu);
     text->SetPosition(0, 0);
     text->Show();
 

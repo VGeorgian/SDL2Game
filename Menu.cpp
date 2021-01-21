@@ -39,29 +39,31 @@ bool Menu::Init() {
     titleImage->Show();
 
     startButton = new MenuButton;
-    startButton->Init("START");
+    CHECK(startButton->Init("START"), "startButton->Init()", __LINE__, __FILE__);
+    //startButton->Init("START");
     startButton->SetParent(this);
     startButton->SetPosition(60, 250);
-    //startButton->SetLeftClickEvent(bind(&Game::StartEvent, this));
     startButton->Show();
 
     settingsButton = new MenuButton();
-    settingsButton->Init("SETARI");
+    CHECK(settingsButton->Init("SETARI"), "settingsButton->Init", __LINE__, __FILE__);
+    //settingsButton->Init("SETARI");
     settingsButton->SetParent(this);
     settingsButton->SetPosition(60, 295);
     settingsButton->Show();
 
     helpButton = new MenuButton();
-    helpButton->Init("CUM SE JOACA?");
+    CHECK(helpButton->Init("CUM SE JOACA?"), "helpButton->Init", __LINE__, __FILE__);
+    //helpButton->Init("CUM SE JOACA?");
     helpButton->SetParent(this);
     helpButton->SetPosition(60, 340);
     helpButton->Show();
 
     exitButton = new MenuButton();
-    exitButton->Init("IESIRE");
+    CHECK(exitButton->Init("IESIRE"), "exitButton->Init", __LINE__, __FILE__);
+    //exitButton->Init("IESIRE");
     exitButton->SetParent(this);
     exitButton->SetPosition(60, 385);
-   // helpButton->SetLeftClickEvent(bind(&Game::ExitEvent, this));
     exitButton->Show();
 
 	return true;

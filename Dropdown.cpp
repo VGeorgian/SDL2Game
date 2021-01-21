@@ -21,22 +21,28 @@ Dropdown::~Dropdown() {
 }
 
 bool Dropdown::Init() {
-	this->LoadImage("assets/img/dropdown.png");
+
+	CHECK(this->LoadImage("assets/img/dropdown.png"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/dropdown.png");
 	this->SetSize(227, 32);
 	this->SetLeftClickEvent(bind(&Dropdown::ToggleDropdown, this));
 	this->Show();
 
 	currentResolution = new TextLine();
 	currentResolution->SetParent(this);
-	currentResolution->SetFont("assets/font/Bangers-Regular.ttf", 25);
-	currentResolution->SetColor(255, 255, 255);
-	currentResolution->SetText("800 x 600");
+	CHECK(currentResolution->SetFont("assets/font/Bangers-Regular.ttf", 25), "currentResolution->SetFont()", __LINE__, __FILE__);
+	CHECK(currentResolution->SetColor(255, 255, 255), "currentResolution->SetColor()", __LINE__, __FILE__);
+	CHECK(currentResolution->SetText("800 x 600"), "currentResolution->SetText()", __LINE__, __FILE__);
+	//currentResolution->SetFont("assets/font/Bangers-Regular.ttf", 25);
+	//currentResolution->SetColor(255, 255, 255);
+	//currentResolution->SetText("800 x 600");
 	currentResolution->SetLeftClickEvent(bind(&Dropdown::ToggleDropdown, this));
 	currentResolution->SetPosition(20, 2);
 	currentResolution->Show();
 
 	dropdownContent = new Image;
-	dropdownContent->LoadImage("assets/img/object-blue.png");
+	CHECK(dropdownContent->LoadImage("assets/img/object-blue.png"), "dropdownContent->LoadImage", __LINE__, __FILE__);
+	//dropdownContent->LoadImage("assets/img/object-blue.png");
 	dropdownContent->SetSize(227, 200);
 
 	/*
@@ -52,12 +58,13 @@ bool Dropdown::Init() {
 		{2560, 1440}
 	};
 
+	
 	SDL_DisplayMode DM;
 	SDL_GetCurrentDisplayMode(0, &DM);
 	int screenWidth = DM.w;
 	int screenHeight = DM.h;
-	cout << "Monitorul tau are o rata de refresh de " << DM.refresh_rate << " Hz.\n";
-
+	//cout << "Monitorul tau are o rata de refresh de " << DM.refresh_rate << " Hz.\n";
+	
 
 	ResolutionItem* tmpItem;
 	int count = 0;
@@ -66,7 +73,8 @@ bool Dropdown::Init() {
 		if (screenWidth >= resolutions[i][0] && screenHeight >= resolutions[i][1]) {
 			count++;
 			tmpItem = new ResolutionItem;
-			tmpItem->Init(resolutions[i][0], resolutions[i][1]);
+			CHECK(tmpItem->Init(resolutions[i][0], resolutions[i][1]), "tmpItem->Init()", __LINE__, __FILE__);
+			//tmpItem->Init(resolutions[i][0], resolutions[i][1]);
 			tmpItem->SetParent(dropdownContent);
 			tmpItem->SetPosition(0, 30 * i);
 			tmpItem->SetEvent(bind(&Dropdown::SetResolution, this, _1, _2));

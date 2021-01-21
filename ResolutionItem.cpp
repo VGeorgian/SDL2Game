@@ -13,7 +13,9 @@ ResolutionItem::~ResolutionItem() {
 
 
 bool ResolutionItem::Init(int width, int height) {
-	this->LoadImage("assets/img/dropdown-item.png");
+
+	CHECK(this->LoadImage("assets/img/dropdown-item.png"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/dropdown-item.png");
 	this->SetSize(227, 32);
 	this->Show();
 
@@ -28,9 +30,12 @@ bool ResolutionItem::Init(int width, int height) {
 
 	text = new TextLine;
 	text->SetParent(this);
-	text->SetFont("assets/font/Bangers-Regular.ttf", 25);
-	text->SetColor(255, 255, 255);
-	text->SetText(tmpBuffer);
+	CHECK(text->SetFont("assets/font/Bangers-Regular.ttf", 25), "text->SetFont()", __LINE__, __FILE__);
+	CHECK(text->SetColor(255, 255, 255), "text->SetColor()", __LINE__, __FILE__);
+	CHECK(text->SetText(tmpBuffer), "text->SetText()", __LINE__, __FILE__);
+	//text->SetFont("assets/font/Bangers-Regular.ttf", 25);
+	//text->SetColor(255, 255, 255);
+	//text->SetText(tmpBuffer);
 	text->SetLeftClickEvent(bind(&ResolutionItem::OnLeftClick, this));
 	text->SetPosition(10, 2);
 	text->Show();

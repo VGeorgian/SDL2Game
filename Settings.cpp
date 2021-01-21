@@ -69,14 +69,12 @@ void Settings::SaveSettings() {
 	OUT << musicPlaying << "\n";
 	OUT << musicVolume << "\n";
 
-
-
 	Mix_VolumeMusic(musicVolume);
-	
 }
 
 bool Settings :: Init() {
-	this->LoadImage("assets/img/background_menu.jpg");
+	CHECK(this->LoadImage("assets/img/background_menu.jpg"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/background_menu.jpg");
 	this->SetSize(GetWindowSize().x, GetWindowSize().y);
 	this->Show();
 
@@ -106,14 +104,18 @@ bool Settings :: Init() {
 
 	title = new TextLine();
 	title->SetParent(this);
-	title->SetFont("assets/font/Bangers-Regular.ttf", 50);
-	title->SetColor(255, 255, 255);
-	title->SetText("SETARI");
+	CHECK(title->SetFont("assets/font/Bangers-Regular.ttf", 50), "title->SetFont()", __LINE__, __FILE__);
+	CHECK(title->SetColor(255, 255, 255), "title->SetColor()", __LINE__, __FILE__);
+	CHECK(title->SetText("SETARI"), "title->SetText()", __LINE__, __FILE__);
+	//title->SetFont("assets/font/Bangers-Regular.ttf", 50);
+	//title->SetColor(255, 255, 255);
+	//title->SetText("SETARI");
 	title->SetPosition(30, 60);
 	title->Show();
 
 	saveButton = new MenuButton();
-	saveButton->Init("SALVEAZÃ SETARI", 60);
+	CHECK(saveButton->Init("SALVEAZÃ SETARI", 60), "saveButton->Init()", __LINE__, __FILE__);
+	//saveButton->Init("SALVEAZÃ SETARI", 60);
 	saveButton->SetPosition(30, GetWindowSize().y - 100);
 	saveButton->SetParent(this);
 	saveButton->SetLeftClickEvent(bind(&Settings::SaveSettings, this));
@@ -121,43 +123,56 @@ bool Settings :: Init() {
 
 	screenSizeLabel = new TextLine();
 	screenSizeLabel->SetParent(this);
-	screenSizeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
-	screenSizeLabel->SetColor(255, 255, 255);
-	screenSizeLabel->SetText("REZOLUTIE JOC");
+
+	CHECK(screenSizeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30), "screenSizeLabel->SetFont()", __LINE__, __FILE__);
+	CHECK(screenSizeLabel->SetColor(255, 255, 255), "screenSizeLabel->SetColor()", __LINE__, __FILE__);
+	CHECK(screenSizeLabel->SetText("REZOLUTIE JOC"), "screenSizeLabel->SetText()", __LINE__, __FILE__);
+	//screenSizeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
+	//screenSizeLabel->SetColor(255, 255, 255);
+	//screenSizeLabel->SetText("REZOLUTIE JOC");
 	screenSizeLabel->SetPosition(60, 180);
 	screenSizeLabel->Show();
 
 	musicStatusLabel = new TextLine();
 	musicStatusLabel->SetParent(this);
-	musicStatusLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
-	musicStatusLabel->SetColor(255, 255, 255);
-	musicStatusLabel->SetText("MUZICA FUNDAL");
+	CHECK(musicStatusLabel->SetFont("assets/font/Bangers-Regular.ttf", 30), "musicStatusLabel->SetFont()", __LINE__, __FILE__);
+	CHECK(musicStatusLabel->SetColor(255, 255, 255), "musicStatusLabel->SetColor()", __LINE__, __FILE__);
+	CHECK(musicStatusLabel->SetText("MUZICA FUNDAL"), "musicStatusLabel->SetText()", __LINE__, __FILE__);
+	//musicStatusLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
+	//musicStatusLabel->SetColor(255, 255, 255);
+	//musicStatusLabel->SetText("MUZICA FUNDAL");
 	musicStatusLabel->SetPosition(60, 230);
 	musicStatusLabel->Show();
 
 	volumeLabel = new TextLine();
 	volumeLabel->SetParent(this);
-	volumeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
-	volumeLabel->SetColor(255, 255, 255);
-	volumeLabel->SetText("VOLUM");
+	CHECK(volumeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30), "volumeLabel->SetFont()", __LINE__, __FILE__);
+	CHECK(volumeLabel->SetColor(255, 255, 255), "volumeLabel->SetColor()", __LINE__, __FILE__);
+	CHECK(volumeLabel->SetText("VOLUM"), "volumeLabel->SetText()", __LINE__, __FILE__);
+	//volumeLabel->SetFont("assets/font/Bangers-Regular.ttf", 30);
+	//volumeLabel->SetColor(255, 255, 255);
+	//volumeLabel->SetText("VOLUM");
 	volumeLabel->SetPosition(60, 280);
 	volumeLabel->Show();
 
 	volumeRange = new RangeInput;
-	volumeRange->Init(300);
+	CHECK(volumeRange->Init(300), "volumeRange->Init()", __LINE__, __FILE__);
+	//volumeRange->Init(300);
 	volumeRange->SetParent(this);
 	volumeRange->SetPosition(140, 280);
 	volumeRange->SetValue(musicVolume);
 
 	musicCheckbox = new Checkbox;
-	musicCheckbox->Init();
+	CHECK(musicCheckbox->Init(), "musicCheckbox->Init()", __LINE__, __FILE__);
+	//musicCheckbox->Init();
 	musicCheckbox->SetParent(this);
 	musicCheckbox->SetPosition(230, 230);
 	musicCheckbox->Show();
 	musicCheckbox->SetStatus(musicPlaying);
 
 	resolutionDropdown = new Dropdown;
-	resolutionDropdown->Init();
+	CHECK(resolutionDropdown->Init(), "resolutionDropdown->Init()", __LINE__, __FILE__);
+	//resolutionDropdown->Init();
 	resolutionDropdown->SetParent(this);
 	resolutionDropdown->SetPosition(220, 180);
 	resolutionDropdown->Show();

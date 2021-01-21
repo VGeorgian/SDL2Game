@@ -1,5 +1,5 @@
 #include "Checkbox.h"
-
+#include "config.h"
 Checkbox::Checkbox() {
 	checked = false;
 	arrow = nullptr;
@@ -11,13 +11,13 @@ Checkbox::~Checkbox() {
 }
 
 bool Checkbox::Init() {
-	this->LoadImage("assets/img/checkbox.png");
+	CHECK(this->LoadImage("assets/img/checkbox.png"), "this->LoadImage()", __LINE__, __FILE__);
 	this->SetSize(32, 32);
 	this->SetLeftClickEvent(bind(&Checkbox::SwitchStatus, this));
 	this->Show();
 
 	arrow = new Image;
-	arrow->LoadImage("assets/img/checkbox-arrow.png");
+	CHECK(arrow->LoadImage("assets/img/checkbox-arrow.png"), "this->LoadImage()", __LINE__, __FILE__);
 	arrow->SetParent(this);
 	arrow->SetSize(32, 32);
 	arrow->SetPosition(0, 0);

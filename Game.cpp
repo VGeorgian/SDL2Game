@@ -105,7 +105,8 @@ bool Game::Init() {
     gameMap->Hide();
 
     backButton = new MenuButton();
-    backButton->Init("Inapoi la meniu", 25);
+    CHECK(backButton->Init("Inapoi la meniu", 25), "backButton->Init()", __LINE__, __FILE__);
+    //backButton->Init("Inapoi la meniu", 25);
     backButton->SetPosition(Interface::GetWindowSize().x - 170, 20);
     backButton->SetLeftClickEvent(bind(&Game::BackToMenuEvent, this));
     backButton->Show();
@@ -117,9 +118,12 @@ bool Game::Init() {
 
 
     textFPS = new TextLine;
-    textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
-    textFPS->SetColor(255, 255, 255);
-    textFPS->SetText("FPS: 0");
+    CHECK(textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20), "textFPS->SetFont()", __LINE__, __FILE__);
+    CHECK(textFPS->SetColor(255, 255, 255), "textFPS->SetColor()", __LINE__, __FILE__);
+    CHECK(textFPS->SetText("FPS: 0"), "textFPS->SetText()", __LINE__, __FILE__);
+    //textFPS->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
+    //textFPS->SetColor(255, 255, 255);
+    //textFPS->SetText("FPS: 0");
     textFPS->SetPosition(10, 5);
     textFPS->Show();
 

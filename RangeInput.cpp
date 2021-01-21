@@ -16,12 +16,14 @@ RangeInput::~RangeInput() {
 }
 
 bool RangeInput::Init(const unsigned int& length) {
-	this->LoadImage("assets/img/slider-bar.png");
+	CHECK(this->LoadImage("assets/img/slider-bar.png"), "this->LoadImage()", __LINE__, __FILE__);
+	//this->LoadImage("assets/img/slider-bar.png");
 	this->SetSize(length, 34);
 	this->Show();
 
 	cursor = new Image;
-	cursor->LoadImage("assets/img/slider-cursor.png");
+	CHECK(cursor->LoadImage("assets/img/slider-cursor.png"), "cursor->LoadImage()", __LINE__, __FILE__);
+	//cursor->LoadImage("assets/img/slider-cursor.png");
 	cursor->SetParent(this);
 	cursor->SetPosition(0, 5);
 	cursor->SetSize(4, 25);
@@ -29,10 +31,13 @@ bool RangeInput::Init(const unsigned int& length) {
 	cursor->Show();
 
 	valueLabel = new TextLine;
-	valueLabel->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
 	valueLabel->SetParent(this);
-	valueLabel->SetColor(255, 255, 255);
-	valueLabel->SetText("0");
+	CHECK(valueLabel->SetFont("assets/font/NerkoOne-Regular.ttf", 20), "valueLabel->SetFont()", __LINE__, __FILE__);
+	CHECK(valueLabel->SetColor(255, 255, 255), "valueLabel->SetColor()", __LINE__, __FILE__);
+	CHECK(valueLabel->SetText("0"), "valueLabel->SetText()", __LINE__, __FILE__);
+	//valueLabel->SetFont("assets/font/NerkoOne-Regular.ttf", 20);
+	//valueLabel->SetColor(255, 255, 255);
+	//valueLabel->SetText("0");
 	valueLabel->SetPosition(0, -10);
 	valueLabel->Show();
 
@@ -69,6 +74,7 @@ void RangeInput::Update() {
 
 	char tmpBuffer[8];
 	snprintf(tmpBuffer, 8, "%d", value);
+
 	valueLabel->SetText(tmpBuffer);
 }
 

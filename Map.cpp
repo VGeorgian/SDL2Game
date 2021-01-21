@@ -66,7 +66,8 @@ bool Map::Init() {
 
         tmpObject = new GameObject;
         tmpObject->SetParent(this);
-        tmpObject->LoadImage(buffer);
+        CHECK(tmpObject->LoadImage(buffer), "tmpObject->LoadImage()", __LINE__, __FILE__);
+        //tmpObject->LoadImage(buffer);
         tmpObject->SetPosition(x, y);
         tmpObject->SetSize(w, h);
         tmpObject->Show();
@@ -76,17 +77,19 @@ bool Map::Init() {
 
     GameObject* snakeMachine = new GameObject;
     snakeMachine->SetParent(this);
-    snakeMachine->LoadImage(buffer);
+    CHECK(snakeMachine->LoadImage("assets/img/snake-machine.png"), "snakeMachine->LoadImage()", __LINE__, __FILE__);
+    //snakeMachine->LoadImage(buffer);
     snakeMachine->SetPosition(500, 500);
-    snakeMachine->SetSize(150, 300);
+    snakeMachine->SetSize(150, 250);
     snakeMachine->SetLeftClickEvent(bind(&Map::PlaySnake, this));
     snakeMachine->Show();
 
     GameObject* spaceInvadersMachine = new GameObject;
     spaceInvadersMachine->SetParent(this);
-    spaceInvadersMachine->LoadImage(buffer);
+    CHECK(spaceInvadersMachine->LoadImage("assets/img/space-machine.png"), "spaceInvadersMachine->LoadImage()", __LINE__, __FILE__);
+    //spaceInvadersMachine->LoadImage(buffer);
     spaceInvadersMachine->SetPosition(800, 500);
-    spaceInvadersMachine->SetSize(150, 300);
+    spaceInvadersMachine->SetSize(150, 250);
     spaceInvadersMachine->SetLeftClickEvent(bind(&Map::PlaySpaceInvaders, this));
     spaceInvadersMachine->Show();
 
