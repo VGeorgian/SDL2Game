@@ -41,10 +41,23 @@ bool Interface::IsSelfDestroy() {
 
 void Interface::BringToFront() {
     //tmpInterface = MyInterface->uiElements.begin()[pos];
-    for (int i = 0; i < uiElements.size(); ++i) {
-        if (uiElements.begin()[i] == this) {
-            uiElements.erase(uiElements.begin() + i);
-            uiElements.push_back(this);
+    if (this->GetParent() != nullptr)
+        this->GetParent()->BringChildToFront(this);
+    else
+        for (int i = 0; i < uiElements.size(); ++i) {
+            if (uiElements.begin()[i] == this) {
+                uiElements.erase(uiElements.begin() + i);
+                uiElements.push_back(this);
+                break;
+            }
+        }
+}
+
+void Interface::BringChildToFront(Interface* child) {
+    for (int i = 0; i < childs.size(); ++i) {
+        if (childs.begin()[i] == child) {
+            childs.erase(childs.begin() + i);
+            childs.push_back(child);
             break;
         }
     }
@@ -123,6 +136,20 @@ void Interface::SetFocus() {
 
 bool Interface::CheckIfRunning() {
 	return isRunning;
+}
+
+void Interface::RenderChilds() {
+    for (int i = 0; i < childs.size(); ++i) {
+        if (childs.begin()[i]->isRealShow()) {
+            if (childs.begin()[i]->isParent()) {
+                childs.begin()[i]->Render();
+                childs.begin()[i]->RenderChilds();
+            }
+            else {
+                childs.begin()[i]->Render();
+            }
+        }
+    }
 }
 
 void Interface::SetHorizontalCenterPosition() {

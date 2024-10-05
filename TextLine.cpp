@@ -1,7 +1,7 @@
 #include <string.h>
 #include "TextLine.h"
 
-TextLine::TextLine():Interface() {
+TextLine::TextLine(): Interface() {
 	//font = TTF_OpenFont("", 20);
 	font = nullptr;
 	texture = nullptr;

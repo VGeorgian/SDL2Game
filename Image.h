@@ -4,7 +4,7 @@
 #include "config.h"
 #include "Interface.h"
 
-class Image:public Interface {
+class Image: public Interface {
 
 protected:
     SDL_Texture* texture;

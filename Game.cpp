@@ -159,14 +159,9 @@ void Game::BackToMenuEvent() {
 }
 
 void Game::Run() {
-    //std::map<int, bool>;
-    int x = 0;
     int i, currentFPS = 0;
     SDL_Event event;
-    stack <Interface*> mystack;
-    stack <bool> canRender;
-    bool checked[MAX_INTERFACE_ELEMENTS];
-    bool b_canRender = true;
+    bool canRender = true;
     bool KEYS[SDL_NUM_SCANCODES];
     unsigned int lastRenderTime = 0,
                  currentRenderTime,
@@ -189,6 +184,10 @@ void Game::Run() {
         }
 
 
+        /*
+        *  Citire evenimente din fereastra SDL:
+        *     apasari de taste / click-uri / interactiuni cu fereastra (ex: minimizare)
+        */
 
         SDL_GetMouseState(&Interface::mouseX, &Interface::mouseY);
         while (SDL_PollEvent(&event)) {
@@ -220,6 +219,7 @@ void Game::Run() {
                 * Verific toate elementele interfetei si apelez evenimentul
                 * de click pe elementul cel mai din fata
                 */
+
                 for (int64_t j = MyInterface->uiElements.size() - 1; j >= 0; --j) { // TODO: Posibil segmentation fault daca in OnMouseClick se mai sterg elemente
                     if (MyInterface->uiElements.begin()[j]->isRealShow() && MyInterface->uiElements.begin()[j]->IsOnMouseRange()) {
                         if (MyInterface->uiElements.begin()[j]->isParent()) {
@@ -268,86 +268,36 @@ void Game::Run() {
                 ++currentFPS;
                 if (currentRenderTime > tmpTime + 1000) {
                     tmpTime = currentRenderTime;
-                    //printf("FPS-uri: %d\n", currentFPS);
+
                     snprintf(tmpBuffer, 10, "FPS: %d", currentFPS);
                     textFPS->SetText(tmpBuffer);
                     currentFPS = 1;
                 }
                 lastRenderTime = currentRenderTime;
-                b_canRender = true;
+                canRender = true;
             }
-            else b_canRender = false;
+            else canRender = false;
         }
 
-        if(b_canRender)
+        if(canRender)
             SDL_RenderClear(Interface::renderer);
 
-        memset(checked, 0, sizeof(bool) * MAX_INTERFACE_ELEMENTS);
-
-        // TODO: Randarea separatata de update -> mult mai rapid
-
-        i = 0;
-        int64_t interfaceSize = MyInterface->uiElements.size();
-        
-        for (int it = 0; it < interfaceSize; ++it) {
-            
-            if (MyInterface->uiElements.begin()[it]->GetParent() == nullptr) {
-                MyInterface->uiElements.begin()[it]->UpdateFollowingPosition();
-                MyInterface->uiElements.begin()[it]->Update();
-                if (MyInterface->uiElements.begin()[it]->isShow() && b_canRender) {
-                    MyInterface->uiElements.begin()[it]->VerifyMouseState();
-                    MyInterface->uiElements.begin()[it]->Render();
+        for (i = 0; i < MyInterface->uiElements.size(); ++i) {
+            MyInterface->uiElements.begin()[i]->UpdateFollowingPosition();
+            MyInterface->uiElements.begin()[i]->Update();
+            MyInterface->uiElements.begin()[i]->VerifyMouseState();
+            MyInterface->uiElements.begin()[i]->UpdatePosition();
+            if (canRender && MyInterface->uiElements.begin()[i]->GetParent() == nullptr && MyInterface->uiElements.begin()[i]->isRealShow()) {
+                if (MyInterface->uiElements.begin()[i]->isParent()) {
+                    MyInterface->uiElements.begin()[i]->Render();
+                    MyInterface->uiElements.begin()[i]->RenderChilds();
                 }
-
-                checked[i] = true;
-
-                //Verific daca e parinte si ii caut toti copiii
-                if (MyInterface->uiElements.begin()[it]->isParent()) {
-                    mystack.push(MyInterface->uiElements.begin()[it]);
-                    canRender.push(MyInterface->uiElements.begin()[it]->isShow());
-
-                    for (int j = 0; j < interfaceSize; ++j) {
-                        if (!checked[j]) {
-                            if (!mystack.empty() && MyInterface->uiElements.begin()[j]->GetParent() == mystack.top()) {
-
-                                //Verific daca parintii lui sunt afisati
-                                if (MyInterface->uiElements.begin()[j]->isParent()) {
-                                    if (canRender.top())
-                                        canRender.push(MyInterface->uiElements.begin()[j]->isShow());
-                                    else
-                                        canRender.push(false);
-                                }
-
-                                MyInterface->uiElements.begin()[j]->UpdateFollowingPosition();
-                                MyInterface->uiElements.begin()[j]->Update();
-                                MyInterface->uiElements.begin()[j]->UpdatePosition();
-
-                                //Daca nu are parinti, verific daca el este vizibil
-                                if (canRender.top() && MyInterface->uiElements.begin()[j]->isShow() && b_canRender) {
-                                    MyInterface->uiElements.begin()[j]->VerifyMouseState();
-                                    MyInterface->uiElements.begin()[j]->Render();
-                                }
-
-                                checked[j] = true;
-
-                                if (MyInterface->uiElements.begin()[j]->isParent()) {
-                                    mystack.push(MyInterface->uiElements.begin()[j]);
-                                    j = -1;
-                                }
-                            }
-                        }
-                        if ((j == interfaceSize - 1) && !mystack.empty()) {
-                            mystack.pop();
-                            canRender.pop();
-                            j = -1;
-                        }
-                    }
-                }
+                else
+                    MyInterface->uiElements.begin()[i]->Render();
             }
-            ++i;
         }
 
-        if (b_canRender)
+        if (canRender)
             SDL_RenderPresent(Interface::renderer);
 	}
 }

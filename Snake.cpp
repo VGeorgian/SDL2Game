@@ -155,8 +155,6 @@ bool Snake::Init() {
 	isStarted = false;
 	startScreen->BringToFront();
 
-
-
 	return true;
 }
 
@@ -176,7 +174,7 @@ void Snake::StartGame() {
 	positionY = 8;
 	//TODO: Add autodestroy variable
 
-	/*
+	
 	Image* tmpImg;
 	for (int i = 0; i < 100; ++i){
 		tmpImg = new Image;
@@ -188,12 +186,14 @@ void Snake::StartGame() {
 
 		snake.push_back(tmpImg);
 	}
-	*/
+	
 }
 
 void Snake::OpenGame() {
+	BringToFront();
 	Show();
 	startScreen->Show();
+	gameOverScreen->Hide();
 	isStarted = false;
 }
 
@@ -294,11 +294,10 @@ void Snake::Update() {
 			// Verific daca urmatoarea pozitie este tot parte din sarpe
 			for (int i = 1; i < snake.size(); ++i) {
 				if (snakeHead[i]->GetRelativePosition().x == 30 * (positionX - 1) && snakeHead[i]->GetRelativePosition().y == 30 * (positionY - 1)) {
-					cout << "Sfarsitul jocului!\n";
 					snakeHead[i]->LoadImage("assets/img/object-red.png");
 					isStarted = false;
-					gameOverScreen->BringToFront();
 					gameOverScreen->Show();
+					gameOverScreen->BringToFront();
 					return;
 				}
 			}
@@ -320,7 +319,6 @@ void Snake::Update() {
 			}
 
 			if (eatFruit) {
-				cout << "Adaug la " << tmpPosition.x << " " << tmpPosition.y << endl;
 				Image* tmpSnake = new Image;
 				tmpSnake->LoadImage("assets/img/snake.png");
 				tmpSnake->SetParent(field);
