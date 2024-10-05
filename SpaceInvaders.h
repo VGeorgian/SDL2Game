@@ -24,6 +24,7 @@ class SpaceInvaders : public Image {
 	bool isStarted;
 
 	Timer shootTimer;
+	Timer movingTimer;
 public:
 	SpaceInvaders();
 	~SpaceInvaders();

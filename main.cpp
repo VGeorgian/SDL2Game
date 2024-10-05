@@ -1,4 +1,4 @@
-#define SDL_MAIN_HANDLED
+//#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <iostream>
 #include <conio.h>
@@ -19,7 +19,7 @@ SDL_Renderer* Interface::renderer = nullptr;
 
 vector <Interface*> Interface::uiElements;
 
-int main(void) {
+int main(int argc, char* args[]) {
     Game MyGame;
 
     CHECK(MyGame.Init(), "MyGame.Init()", __LINE__, __FILE__);

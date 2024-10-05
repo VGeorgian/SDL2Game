@@ -55,6 +55,7 @@ public:
 	void Update() {};
 	void Render() {};
 	bool CheckIfRunning();
+	void RenderChilds();
 	
 	void SetParent(Interface* parent);
 	void AddChild(Interface* child);
@@ -77,6 +78,7 @@ public:
 	void SetFocus();
 	bool IsFocusable() { return b_isFocusable; };
 	void BringToFront();
+	void BringChildToFront(Interface* child);
 
 	void AddMovableTag();
 	bool IsMovable();

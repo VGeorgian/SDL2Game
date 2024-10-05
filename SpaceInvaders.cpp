@@ -19,6 +19,7 @@ SpaceInvaders::SpaceInvaders() {
 	direction = 0;
 	score = 0;
 	shootTimer.SetDelay(0);
+	movingTimer.SetDelay(0);
 }
 
 SpaceInvaders::~SpaceInvaders() {
@@ -84,6 +85,7 @@ void SpaceInvaders::StartGame() {
 
 void SpaceInvaders::EndGame() {
 	isStarted = false;
+	gameOverScreen->BringToFront();
 	gameOverScreen->Show();
 }
 
@@ -237,7 +239,7 @@ void SpaceInvaders::OnKeyRelease(bool KEYS[], int currentKey) {
 
 
 void SpaceInvaders::Update() {
-	if (isStarted) {
+	if (isStarted && movingTimer.TimeElasped()) {
 
 		SDL_Rect* tmpRect = nullptr;
 		if (direction == 1 && playerPosition > 10) {
@@ -270,7 +272,7 @@ void SpaceInvaders::Update() {
 				playerAmmo.erase(playerAmmo.begin() + i);
 				--i;
 			}
-
+			
 			else {
 				tmpRect = playerAmmo.begin()[i]->GetDstRectPointer();
 				playerAmmo.begin()[i]->SetPosition(playerAmmo.begin()[i]->GetRelativePosition().x, playerAmmo.begin()[i]->GetRelativePosition().y - 1);
@@ -296,12 +298,15 @@ void SpaceInvaders::Update() {
 				}
 			}
 		}
+
+		movingTimer.SetDelay(6);
 	}
 
 
 }
 
 void SpaceInvaders::OpenGame() {
+	BringToFront();
 	startScreen->BringToFront();
 	startScreen->Show();
 	this->Show();
